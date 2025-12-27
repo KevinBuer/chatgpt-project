@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<title>SVG 飞机大战</title>
+<style>
+  body {
+    margin: 0;
+    background: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  #info {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div id="info">
+  ← → 移动 ｜ 空格射击 ｜ 分数：<span id="score">0</span>
+</div>
+
+<svg id="game" width="400" height="600" viewBox="0 0 400 600" style="background:#000">
+  <!-- 玩家飞机 -->
+  <polygon id="player"
+    points="200,520 185,560 200,545 215,560"
+    fill="#4caf50" />
+
+</svg>
+
+<script>
+const svg = document.getElementById("game");
+const player = document.getElementById("player");
+const scoreEl = document.getElementById("score");
+
+let playerX = 200;
+let bullets = [];
+let enemies = [];
+let score = 0;
+let left = false;
+let right = false;
+
+document.addEventListener("keydown", e => {
+  if (e.code === "ArrowLeft") left = true;
+  if (e.code === "ArrowRight") right = true;
+  if (e.code === "Space") shoot();
+});
+
+document.addEventListener("keyup", e => {
+  if (e.code === "ArrowLeft") left = false;
+  if (e.code === "ArrowRight") right = false;
+});
+
+function updatePlayer() {
+  if (left) playerX -= 5;
+  if (right) playerX += 5;
+  playerX = Math.max(20, Math.min(380, playerX));
+  player.setAttribute(
+    "points",
+    `${playerX},520 ${playerX-15},560 ${playerX},545 ${playerX+15},560`
+  );
+}
+
+function shoot() {
+  const bullet = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  bullet.setAttribute("x", playerX - 2);
+  bullet.setAttribute("y", 510);
+  bullet.setAttribute("width", 4);
+  bullet.setAttribute("height", 10);
+  bullet.setAttribute("fill", "#ffeb3b");
+  svg.appendChild(bullet);
+  bullets.push(bullet);
+}
+
+function spawnEnemy() {
+  const enemy = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  const x = Math.random() * 360 + 20;
+  enemy.setAttribute("x", x);
+  enemy.setAttribute("y", -20);
+  enemy.setAttribute("width", 30);
+  enemy.setAttribute("height", 20);
+  enemy.setAttribute("fill", "#f44336");
+  svg.appendChild(enemy);
+  enemies.push(enemy);
+}
+
+function updateBullets() {
+  bullets = bullets.filter(b => {
+    let y = parseFloat(b.getAttribute("y"));
+    y -= 8;
+    b.setAttribute("y", y);
+    if (y < -20) {
+      svg.removeChild(b);
+      return false;
+    }
+    return true;
+  });
+}
+
+function updateEnemies() {
+  enemies = enemies.filter(e => {
+    let y = parseFloat(e.getAttribute("y"));
+    y += 2;
+    e.setAttribute("y", y);
+    if (y > 600) {
+      svg.removeChild(e);
+      return false;
+    }
+    return true;
+  });
+}
+
+function checkCollision() {
+  bullets.forEach(b => {
+    const bx = parseFloat(b.getAttribute("x"));
+    const by = parseFloat(b.getAttribute("y"));
+
+    enemies.forEach(e => {
+      const ex = parseFloat(e.getAttribute("x"));
+      const ey = parseFloat(e.getAttribute("y"));
+
+      if (
+        bx < ex + 30 &&
+        bx + 4 > ex &&
+        by < ey + 20 &&
+        by + 10 > ey
+      ) {
+        svg.removeChild(b);
+        svg.removeChild(e);
+        bullets = bullets.filter(x => x !== b);
+        enemies = enemies.filter(x => x !== e);
+        score++;
+        scoreEl.textContent = score;
+      }
+    });
+  });
+}
+
+let enemyTimer = 0;
+
+function gameLoop() {
+  updatePlayer();
+  updateBullets();
+  updateEnemies();
+  checkCollision();
+
+  enemyTimer++;
+  if (enemyTimer > 60) {
+    spawnEnemy();
+    enemyTimer = 0;
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+</script>
+
+</body>
+</html>
