@@ -10,9 +10,9 @@
 
     body {
       margin: 0;
-      background: radial-gradient(circle at 20% 20%, #162134, #090d1a 60%);
-      color: #e8f0ff;
-      font-family: "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at 18% 22%, #1c2536, #0a0f1c 55%);
+      color: #e7f0ff;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -21,58 +21,86 @@
 
     #frame {
       position: relative;
-      width: 520px;
-      height: 780px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
-      border-radius: 16px;
+      width: 560px;
+      height: 820px;
+      border-radius: 18px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: radial-gradient(circle at 50% -20%, rgba(68, 107, 154, 0.08), rgba(12, 18, 34, 0.5)),
-        linear-gradient(#0c1222 0%, #0c1222 70%, #0b1a2e 100%);
+      background: linear-gradient(135deg, rgba(36, 47, 66, 0.7), rgba(11, 16, 25, 0.95)),
+        radial-gradient(circle at 30% 20%, rgba(95, 118, 151, 0.28), rgba(18, 26, 43, 0.8));
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.55), inset 0 0 0 2px rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     #hud {
       position: absolute;
       top: 12px;
-      left: 14px;
-      right: 14px;
-      display: flex;
-      justify-content: space-between;
+      left: 12px;
+      right: 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
       align-items: center;
-      font-size: 14px;
       z-index: 2;
       pointer-events: none;
-      text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
     }
 
     #legend {
-      line-height: 1.6;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #cbd6e7;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
     }
 
-    #hud strong {
-      color: #7dd6ff;
+    #panel {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: linear-gradient(145deg, rgba(32, 45, 62, 0.85), rgba(13, 21, 34, 0.92));
+      padding: 8px 12px;
+      border-radius: 10px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.4), 0 8px 18px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      background: linear-gradient(135deg, rgba(69, 99, 132, 0.95), rgba(37, 56, 79, 0.9));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+      color: #f4fbff;
+      text-shadow: 0 0 6px rgba(0, 0, 0, 0.45);
+    }
+
+    .pill strong {
+      color: #9fe7ff;
+      letter-spacing: 0.4px;
     }
 
     #game {
       display: block;
       width: 100%;
       height: 100%;
-      background: #03060f;
+      background: #050a13;
       cursor: crosshair;
     }
 
     #overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(rgba(8, 12, 24, 0.85), rgba(8, 12, 24, 0.9));
+      background: radial-gradient(circle at 50% 30%, rgba(36, 54, 82, 0.18), rgba(5, 8, 15, 0.92));
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       text-align: center;
       transition: opacity 160ms ease;
       z-index: 3;
+      color: #e9f4ff;
     }
 
     #overlay.hidden {
@@ -80,26 +108,39 @@
       opacity: 0;
     }
 
+    #overlay h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: 1px;
+      text-shadow: 0 6px 20px rgba(0, 0, 0, 0.65);
+    }
+
+    #overlay p {
+      margin: 0;
+      line-height: 1.6;
+      color: #d5e0f3;
+    }
+
     button {
-      background: linear-gradient(135deg, #36b37e, #2e8d63);
-      border: none;
-      color: #f0f8ff;
-      padding: 10px 20px;
+      background: linear-gradient(135deg, #2c9f6b, #1f7c54);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f2fbff;
+      padding: 11px 24px;
       font-size: 16px;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.12);
       transition: transform 120ms ease, box-shadow 120ms ease;
     }
 
     button:hover {
       transform: translateY(-1px);
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.14);
     }
 
     button:active {
       transform: translateY(1px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.36), inset 0 0 0 rgba(255, 255, 255, 0.18);
     }
   </style>
 </head>
@@ -107,17 +148,20 @@
   <div id="frame">
     <div id="hud">
       <div id="legend">
-        按键：<strong>← →</strong> 左右 ｜ <strong>↑ ↓</strong> 前进/后退 ｜ <strong>空格</strong> 开火
+        按键：<strong>← →</strong> 侧移 ｜ <strong>↑ ↓</strong> 前进/后退 ｜ <strong>空格</strong> 开火 ｜ 防线：红色刻度线
       </div>
-      <div>
-        分数：<strong id="score">0</strong> ｜ 生命：<strong id="lives">3</strong> ｜ 火力：<strong id="power">1</strong>
+      <div id="panel">
+        <span class="pill">分数 <strong id="score">0</strong></span>
+        <span class="pill">金币 <strong id="coins">0</strong></span>
+        <span class="pill">生命 <strong id="lives">3</strong></span>
+        <span class="pill">火力 <strong id="power">1</strong></span>
       </div>
     </div>
-    <canvas id="game" width="520" height="780"></canvas>
-    <div id="overlay">
+    <canvas id="game" width="560" height="820"></canvas>
+    <div id="overlay" data-state="start">
       <h1>飞机突袭交通线</h1>
-      <p>驾驶前线攻击机，扫射来袭的交通工具，摘取水果补给！</p>
-      <button id="start">开始游戏</button>
+      <p>驾驶美军前线攻击机，守住补给线，摧毁前方载具与伪装补给。</p>
+      <button id="start">起飞</button>
     </div>
   </div>
 
@@ -125,6 +169,7 @@
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
     const scoreEl = document.getElementById('score');
+    const coinsEl = document.getElementById('coins');
     const livesEl = document.getElementById('lives');
     const powerEl = document.getElementById('power');
     const overlay = document.getElementById('overlay');
@@ -136,19 +181,24 @@
       running: false,
       lastTime: 0,
       score: 0,
+      coins: 0,
       lives: 3,
+      revives: 0,
+      failureReason: '',
     };
 
     const plane = {
       x: canvas.width / 2,
-      y: canvas.height - 120,
-      width: 68,
-      height: 68,
-      speedX: 330,
-      speedY: 260,
-      baseCooldown: 230,
+      y: canvas.height - 140,
+      width: 82,
+      height: 86,
+      speedX: 360,
+      speedY: 280,
+      baseCooldown: 220,
       lastShot: 0,
     };
+
+    const defenseLine = world.height - 90;
 
     const bullets = [];
     const effects = [];
@@ -172,68 +222,106 @@
       if (e.code === 'Space') keys.space = false;
     });
 
-    startBtn.addEventListener('click', startGame);
+    startBtn.addEventListener('click', () => {
+      const mode = overlay.dataset.state;
+      if (mode === 'revive' && world.coins >= reviveCost()) {
+        reviveGame();
+      } else {
+        startGame();
+      }
+    });
 
     function startGame() {
       world.running = true;
       world.score = 0;
+      world.coins = 0;
       world.lives = 3;
+      world.revives = 0;
       plane.x = canvas.width / 2;
-      plane.y = canvas.height - 120;
+      plane.y = canvas.height - 140;
       bullets.length = 0;
       threats.length = 0;
+      effects.length = 0;
       world.lastTime = performance.now();
       spawnTimer = 0;
       updateHud();
       overlay.classList.add('hidden');
+      overlay.dataset.state = 'start';
       overlay.querySelector('h1').textContent = '飞机突袭交通线';
-      overlay.querySelector('p').textContent = '驾驶前线攻击机，扫射来袭的交通工具，摘取水果补给！';
-      startBtn.textContent = '开始游戏';
+      overlay.querySelector('p').textContent = '驾驶美军前线攻击机，守住补给线，摧毁前方载具与伪装补给。';
+      startBtn.textContent = '起飞';
+      requestAnimationFrame(loop);
+    }
+
+    function reviveCost() {
+      return Math.round(14 * Math.pow(1.6, world.revives));
+    }
+
+    function reviveGame() {
+      const cost = reviveCost();
+      world.coins -= cost;
+      world.revives += 1;
+      world.lives = 3;
+      bullets.length = 0;
+      threats.length = 0;
+      effects.length = 0;
+      plane.x = canvas.width / 2;
+      plane.y = canvas.height - 140;
+      world.running = true;
+      world.lastTime = performance.now();
+      updateHud();
+      overlay.classList.add('hidden');
+      overlay.dataset.state = 'start';
       requestAnimationFrame(loop);
     }
 
     function updateHud() {
       scoreEl.textContent = world.score;
+      coinsEl.textContent = world.coins;
       livesEl.textContent = world.lives;
       powerEl.textContent = firepowerLevel();
     }
 
     function spawnThreat() {
       const roll = Math.random();
-      const size = 46 + Math.random() * 22;
-      const x = Math.random() * (world.width - size - 24) + 12;
-      const sway = (Math.random() * 2 - 1) * 60;
+      const level = firepowerLevel();
+      const bulk = 1 + (level - 1) * 0.18 + Math.min(0.3, world.score * 0.003);
+      const baseSize = 48 + Math.random() * 22;
+      const size = baseSize * bulk;
+      const x = Math.random() * (world.width - size - 28) + 14;
+      const sway = (Math.random() * 2 - 1) * 55;
+      const toughness = Math.max(0, level - 1) + Math.floor(world.score / 50);
       const common = { x, y: -size, size, sway, offset: Math.random() * Math.PI * 2 };
 
       if (roll > 0.8) {
-        threats.push({ ...common, type: 'fruit', speedY: 55 + Math.random() * 35, hp: 1 });
+        threats.push({ ...common, type: 'fruit', speedY: 65 + Math.random() * 35, hp: 1 + Math.floor(toughness / 2) });
       } else if (roll > 0.55) {
-        threats.push({ ...common, type: 'jeep', speedY: 85 + Math.random() * 55 + world.score * 0.35, hp: 1 });
+        threats.push({ ...common, type: 'jeep', speedY: 90 + Math.random() * 60 + world.score * 0.25, hp: 1 + toughness });
       } else if (roll > 0.3) {
-        threats.push({ ...common, type: 'truck', speedY: 65 + Math.random() * 40 + world.score * 0.25, hp: 2 });
+        threats.push({ ...common, type: 'tank', speedY: 70 + Math.random() * 40 + world.score * 0.2, hp: 2 + toughness });
       } else {
-        threats.push({ ...common, type: 'boat', speedY: 60 + Math.random() * 30 + world.score * 0.2, hp: 1 });
+        threats.push({ ...common, type: 'boat', speedY: 65 + Math.random() * 35 + world.score * 0.22, hp: 1 + toughness });
       }
     }
 
     function firepowerLevel() {
-      if (world.score >= 60) return 3;
-      if (world.score >= 25) return 2;
+      if (world.score >= 120) return 3;
+      if (world.score >= 50) return 2;
       return 1;
     }
 
     function shoot(timestamp) {
       const level = firepowerLevel();
-      const cooldown = Math.max(120, plane.baseCooldown - (level - 1) * 55);
+      const cooldown = Math.max(120, plane.baseCooldown - (level - 1) * 60);
       if (timestamp - plane.lastShot < cooldown) return;
       plane.lastShot = timestamp;
 
-      const offsets = level === 1 ? [0] : level === 2 ? [-10, 10] : [-14, 0, 14];
+      const offsets = level === 1 ? [0] : level === 2 ? [-12, 12] : [-16, 0, 16];
       offsets.forEach((ox, idx) => {
         const spread = level === 3 && idx !== 1 ? 80 : 0;
-        bullets.push({ x: plane.x + ox, y: plane.y - 18, speed: 620 + level * 20, vx: spread === 0 ? 0 : ox > 0 ? spread : -spread });
+        bullets.push({ x: plane.x + ox, y: plane.y - 20, speed: 660 + level * 30, vx: spread === 0 ? 0 : ox > 0 ? spread : -spread });
       });
-      spawnBurst(plane.x, plane.y - 16, '#ffdd88', 4 + level * 2, 0.5 + level * 0.1);
+      spawnBurst(plane.x, plane.y - 18, '#ffd77a', 4 + level * 2, 0.55 + level * 0.12);
     }
 
     function update(delta, timestamp) {
@@ -243,8 +331,8 @@
       if (keys.right) plane.x += moveX;
       if (keys.up) plane.y -= moveY;
       if (keys.down) plane.y += moveY;
-      plane.x = Math.max(plane.width / 2 + 10, Math.min(world.width - plane.width / 2 - 10, plane.x));
-      plane.y = Math.max(90, Math.min(world.height - 80, plane.y));
+      plane.x = Math.max(plane.width / 2 + 16, Math.min(world.width - plane.width / 2 - 16, plane.x));
+      plane.y = Math.max(110, Math.min(world.height - 110, plane.y));
       if (keys.space) shoot(timestamp);
 
       bullets.forEach((b) => {
@@ -263,11 +351,16 @@
 
       threats.forEach((p) => {
         p.y += p.speedY * delta;
-        p.x += Math.sin(timestamp / 700 + p.offset) * p.sway * delta;
+        p.x += Math.sin(timestamp / 720 + p.offset) * p.sway * delta;
       });
       for (let i = threats.length - 1; i >= 0; i--) {
+        if (threats[i].type !== 'fruit' && threats[i].y + threats[i].size * 0.75 > defenseLine) {
+          breachDefense(threats[i]);
+          threats.splice(i, 1);
+          continue;
+        }
         if (threats[i].y > world.height + threats[i].size) {
-          if (threats[i].type !== 'fruit') loseLife();
+          if (threats[i].type !== 'fruit') loseLife('被漏过的目标导致机体受损');
           threats.splice(i, 1);
         }
       }
@@ -284,11 +377,26 @@
       checkCollision();
     }
 
-    function loseLife() {
+    function loseLife(reason = '机体受损') {
       if (world.lives <= 0) return;
       world.lives -= 1;
       updateHud();
-      if (world.lives <= 0) endGame();
+      if (world.lives <= 0) {
+        world.failureReason = reason;
+        endGame(true);
+      }
+    }
+
+    function breachDefense(threat) {
+      world.failureReason = '防线被 ' + describeThreat(threat.type) + ' 突破';
+      endGame(true);
+    }
+
+    function describeThreat(type) {
+      if (type === 'jeep') return '吉普车';
+      if (type === 'tank') return '重型坦克';
+      if (type === 'boat') return '快艇';
+      return '伪装补给';
     }
 
     function checkCollision() {
@@ -297,7 +405,7 @@
         const px1 = p.x;
         const px2 = p.x + p.size;
         const py1 = p.y;
-        const py2 = p.y + p.size * 0.75;
+        const py2 = p.y + p.size * 0.8;
 
         for (let j = bullets.length - 1; j >= 0; j--) {
           const b = bullets[j];
@@ -309,19 +417,9 @@
           if (bx1 < px2 && bx2 > px1 && by1 < py2 && by2 > py1) {
             bullets.splice(j, 1);
             p.hp -= 1;
+            spawnBurst(b.x, b.y, '#ffd48a', 5, 0.6);
             if (p.hp <= 0) {
-              if (p.type === 'fruit') {
-                world.score += 2;
-                if (world.lives < 5) world.lives += 1;
-                spawnBurst(p.x + p.size / 2, p.y + p.size * 0.2, '#ffb347', 8, 0.9);
-              } else if (p.type === 'truck') {
-                world.score += 3;
-                spawnBurst(p.x + p.size / 2, p.y + p.size * 0.3, '#f0ddc2', 12, 1.1);
-              } else {
-                world.score += 1;
-                const color = p.type === 'boat' ? '#8ad0ff' : '#9cd2ff';
-                spawnBurst(p.x + p.size / 2, p.y + p.size * 0.25, color, 10, 0.8);
-              }
+              grantReward(p);
               threats.splice(i, 1);
               updateHud();
             }
@@ -339,67 +437,97 @@
         if (planeBox.x1 < px2 && planeBox.x2 > px1 && planeBox.y1 < py2 && planeBox.y2 > py1) {
           threats.splice(i, 1);
           if (p.type === 'fruit') {
-            world.score += 2;
+            world.score += 3;
+            world.coins += 3;
             if (world.lives < 5) world.lives += 1;
+            spawnBurst(p.x + p.size / 2, p.y + p.size * 0.25, '#ffb347', 10, 1);
             updateHud();
           } else {
-            loseLife();
+            loseLife('机体遭撞击');
             spawnBurst(plane.x, plane.y - 18, '#ff8b74', 14, 1.2);
           }
         }
       }
     }
 
+    function grantReward(p) {
+      if (p.type === 'fruit') {
+        world.score += 3;
+        world.coins += 3;
+        if (world.lives < 5) world.lives += 1;
+        spawnBurst(p.x + p.size / 2, p.y + p.size * 0.2, '#ffb347', 10, 1);
+      } else if (p.type === 'tank') {
+        world.score += 4;
+        world.coins += 4;
+        spawnBurst(p.x + p.size / 2, p.y + p.size * 0.32, '#f0ddc2', 14, 1.2);
+      } else if (p.type === 'boat') {
+        world.score += 2;
+        world.coins += 2;
+        spawnBurst(p.x + p.size / 2, p.y + p.size * 0.26, '#8ad0ff', 12, 1);
+      } else {
+        world.score += 2;
+        world.coins += 2;
+        spawnBurst(p.x + p.size / 2, p.y + p.size * 0.3, '#c8d6cf', 12, 0.9);
+      }
+    }
+
     function drawBackground() {
       const gradient = ctx.createLinearGradient(0, 0, 0, world.height);
-      gradient.addColorStop(0, '#0d1b2e');
-      gradient.addColorStop(1, '#050914');
+      gradient.addColorStop(0, '#0f1c2d');
+      gradient.addColorStop(1, '#060911');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, world.width, world.height);
 
       ctx.save();
-      ctx.globalAlpha = 0.28;
-      ctx.fillStyle = '#1a2d44';
-      for (let i = 0; i < 26; i++) {
-        const x = (world.width / 26) * i + 4;
+      ctx.globalAlpha = 0.2;
+      ctx.fillStyle = '#213145';
+      for (let i = 0; i < 18; i++) {
+        const x = (world.width / 18) * i + 6;
         ctx.fillRect(x, 0, 2, world.height);
       }
       ctx.restore();
 
-      ctx.fillStyle = 'rgba(255,255,255,0.06)';
+      ctx.fillStyle = 'rgba(255,255,255,0.05)';
       ctx.beginPath();
-      ctx.ellipse(world.width / 2, world.height * 0.2, 120, 28, 0, 0, Math.PI * 2);
+      ctx.ellipse(world.width / 2, world.height * 0.22, 140, 32, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.ellipse(world.width / 3, world.height * 0.35, 80, 20, 0, 0, Math.PI * 2);
+      ctx.ellipse(world.width / 3, world.height * 0.35, 90, 22, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.ellipse(world.width * 0.75, world.height * 0.45, 90, 24, 0, 0, Math.PI * 2);
+      ctx.ellipse(world.width * 0.75, world.height * 0.46, 110, 26, 0, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = '#0e1928';
-      ctx.fillRect(0, world.height - 100, world.width, 110);
-      const runwayGrad = ctx.createLinearGradient(0, world.height - 92, 0, world.height - 12);
-      runwayGrad.addColorStop(0, '#121e31');
-      runwayGrad.addColorStop(1, '#0b111e');
+      ctx.fillRect(0, world.height - 110, world.width, 120);
+      const runwayGrad = ctx.createLinearGradient(0, world.height - 102, 0, world.height - 12);
+      runwayGrad.addColorStop(0, '#1b2d45');
+      runwayGrad.addColorStop(1, '#0b111d');
       ctx.fillStyle = runwayGrad;
-      ctx.fillRect(0, world.height - 92, world.width, 86);
+      ctx.fillRect(0, world.height - 102, world.width, 96);
 
-      ctx.fillStyle = '#1c2f46';
-      for (let i = 0; i < world.width; i += 46) {
-        ctx.fillRect(i + 10, world.height - 84, 18, 74);
+      ctx.fillStyle = '#30445f';
+      for (let i = 0; i < world.width; i += 48) {
+        ctx.fillRect(i + 12, world.height - 94, 18, 82);
       }
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
       ctx.setLineDash([9, 10]);
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(0, world.height - 46);
-      ctx.lineTo(world.width, world.height - 46);
+      ctx.moveTo(0, world.height - 52);
+      ctx.lineTo(world.width, world.height - 52);
       ctx.stroke();
       ctx.setLineDash([]);
 
-      ctx.fillStyle = '#f7c86c';
-      for (let i = 10; i < world.width; i += 58) {
+      ctx.strokeStyle = '#c85555';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, defenseLine);
+      ctx.lineTo(world.width, defenseLine);
+      ctx.stroke();
+
+      ctx.fillStyle = '#f6c76c';
+      for (let i = 10; i < world.width; i += 62) {
         ctx.beginPath();
         ctx.arc(i + 12, world.height - 18, 3, 0, Math.PI * 2);
         ctx.fill();
@@ -409,55 +537,69 @@
     function drawPlayerPlane() {
       ctx.save();
       ctx.translate(plane.x, plane.y);
-      ctx.shadowColor = 'rgba(0,0,0,0.35)';
+      ctx.shadowColor = 'rgba(0,0,0,0.4)';
       ctx.shadowBlur = 16;
 
-      const bodyGrad = ctx.createLinearGradient(0, -plane.height / 2, 0, plane.height / 2);
-      bodyGrad.addColorStop(0, '#d2e8ff');
-      bodyGrad.addColorStop(1, '#5a7fb8');
-      ctx.fillStyle = bodyGrad;
+      const fuselageGrad = ctx.createLinearGradient(0, -plane.height / 2, 0, plane.height / 2);
+      fuselageGrad.addColorStop(0, '#dfe8f5');
+      fuselageGrad.addColorStop(0.5, '#8ea6bf');
+      fuselageGrad.addColorStop(1, '#4e6581');
+      ctx.fillStyle = fuselageGrad;
       ctx.beginPath();
-      ctx.roundRect(-plane.width * 0.22, -plane.height * 0.55, plane.width * 0.44, plane.height * 1.05, 12);
+      ctx.roundRect(-plane.width * 0.22, -plane.height * 0.58, plane.width * 0.44, plane.height * 1.16, 14);
       ctx.fill();
 
-      ctx.fillStyle = '#2c4f85';
+      const wingGrad = ctx.createLinearGradient(-plane.width * 0.6, 0, plane.width * 0.6, 0);
+      wingGrad.addColorStop(0, '#3c4f62');
+      wingGrad.addColorStop(1, '#263649');
+      ctx.fillStyle = wingGrad;
       ctx.beginPath();
-      ctx.moveTo(-plane.width * 0.65, -plane.height * 0.05);
-      ctx.lineTo(plane.width * 0.65, -plane.height * 0.2);
-      ctx.lineTo(plane.width * 0.65, plane.height * 0.05);
+      ctx.moveTo(-plane.width * 0.7, -plane.height * 0.05);
+      ctx.lineTo(plane.width * 0.7, -plane.height * 0.18);
+      ctx.lineTo(plane.width * 0.6, plane.height * 0.12);
+      ctx.lineTo(-plane.width * 0.6, plane.height * 0.25);
       ctx.closePath();
       ctx.fill();
 
-      ctx.fillStyle = '#3b5f9e';
+      const tailGrad = ctx.createLinearGradient(0, plane.height * 0.1, 0, plane.height * 0.7);
+      tailGrad.addColorStop(0, '#4c5f78');
+      tailGrad.addColorStop(1, '#283547');
+      ctx.fillStyle = tailGrad;
       ctx.beginPath();
-      ctx.moveTo(-plane.width * 0.55, plane.height * 0.35);
-      ctx.lineTo(plane.width * 0.55, plane.height * 0.2);
-      ctx.lineTo(plane.width * 0.48, plane.height * 0.5);
-      ctx.lineTo(-plane.width * 0.48, plane.height * 0.65);
+      ctx.moveTo(-plane.width * 0.35, plane.height * 0.25);
+      ctx.lineTo(plane.width * 0.35, plane.height * 0.12);
+      ctx.lineTo(plane.width * 0.3, plane.height * 0.65);
+      ctx.lineTo(-plane.width * 0.3, plane.height * 0.78);
       ctx.closePath();
       ctx.fill();
 
-      ctx.fillStyle = '#f6f9ff';
+      ctx.fillStyle = '#eff6ff';
       ctx.beginPath();
-      ctx.roundRect(-plane.width * 0.16, -plane.height * 0.4, plane.width * 0.32, plane.height * 0.26, 6);
+      ctx.roundRect(-plane.width * 0.18, -plane.height * 0.42, plane.width * 0.36, plane.height * 0.28, 8);
       ctx.fill();
 
       ctx.fillStyle = '#ff9b5a';
       ctx.beginPath();
-      ctx.moveTo(0, -plane.height * 0.65);
-      ctx.lineTo(-plane.width * 0.12, -plane.height * 0.45);
-      ctx.lineTo(plane.width * 0.12, -plane.height * 0.45);
+      ctx.moveTo(0, -plane.height * 0.7);
+      ctx.lineTo(-plane.width * 0.12, -plane.height * 0.48);
+      ctx.lineTo(plane.width * 0.12, -plane.height * 0.48);
       ctx.closePath();
       ctx.fill();
 
       ctx.fillStyle = '#ffd782';
       ctx.beginPath();
-      ctx.arc(0, -plane.height * 0.7, plane.width * 0.08, 0, Math.PI * 2);
+      ctx.arc(0, -plane.height * 0.72, plane.width * 0.08, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = '#c5d6f5';
+      ctx.fillStyle = '#b1c6dc';
       ctx.beginPath();
-      ctx.arc(0, plane.height * 0.15, plane.width * 0.12, 0, Math.PI * 2);
+      ctx.arc(-plane.width * 0.35, plane.height * 0.02, plane.width * 0.08, 0, Math.PI * 2);
+      ctx.arc(plane.width * 0.35, -plane.height * 0.06, plane.width * 0.08, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#f0f4ff';
+      ctx.beginPath();
+      ctx.arc(0, plane.height * 0.18, plane.width * 0.12, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.restore();
@@ -465,15 +607,15 @@
 
     function drawBullets() {
       bullets.forEach((b) => {
-        const grad = ctx.createLinearGradient(b.x, b.y - 16, b.x, b.y + 6);
+        const grad = ctx.createLinearGradient(b.x, b.y - 18, b.x, b.y + 6);
         grad.addColorStop(0, '#ffe27a');
         grad.addColorStop(1, '#ff9f43');
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.roundRect(b.x - 3, b.y - 16, 6, 18, 3);
+        ctx.roundRect(b.x - 3, b.y - 18, 6, 18, 3);
         ctx.fill();
         ctx.fillStyle = '#fff6d5';
-        ctx.fillRect(b.x - 1.5, b.y - 18, 3, 4);
+        ctx.fillRect(b.x - 1.5, b.y - 20, 3, 4);
       });
     }
 
@@ -497,20 +639,20 @@
     function drawJeep(p) {
       ctx.save();
       ctx.translate(p.x + p.size / 2, p.y + p.size * 0.45);
-      const w = p.size * 0.9;
-      const h = p.size * 0.35;
+      const w = p.size * 0.92;
+      const h = p.size * 0.36;
 
-      ctx.fillStyle = '#121212';
-      ctx.fillRect(-w / 2, h * 0.5, w, h * 0.5);
-      ctx.fillStyle = '#2d2d2d';
+      ctx.fillStyle = '#131313';
+      ctx.fillRect(-w / 2, h * 0.5, w, h * 0.55);
+      ctx.fillStyle = '#2a2a2a';
       ctx.beginPath();
       ctx.arc(-w * 0.35, h * 1.05, h * 0.5, 0, Math.PI * 2);
       ctx.arc(w * 0.35, h * 1.05, h * 0.5, 0, Math.PI * 2);
       ctx.fill();
 
       const bodyGrad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
-      bodyGrad.addColorStop(0, '#6a8b52');
-      bodyGrad.addColorStop(1, '#3f5f30');
+      bodyGrad.addColorStop(0, '#6c7f5c');
+      bodyGrad.addColorStop(1, '#405136');
       ctx.fillStyle = bodyGrad;
       ctx.roundRect(-w / 2, -h * 0.1, w, h * 1.1, 8);
       ctx.fill();
@@ -520,42 +662,51 @@
       ctx.restore();
     }
 
-    function drawTruck(p) {
+    function drawTank(p) {
       ctx.save();
-      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.45);
-      const w = p.size;
-      const h = p.size * 0.38;
+      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.48);
+      const w = p.size * 1.02;
+      const h = p.size * 0.4;
 
-      ctx.fillStyle = '#101010';
+      const treadGrad = ctx.createLinearGradient(0, -h, 0, h * 1.6);
+      treadGrad.addColorStop(0, '#1c1c1c');
+      treadGrad.addColorStop(1, '#0f0f0f');
+      ctx.fillStyle = treadGrad;
       ctx.beginPath();
-      ctx.arc(-w * 0.35, h * 1.05, h * 0.55, 0, Math.PI * 2);
-      ctx.arc(w * 0.2, h * 1.05, h * 0.55, 0, Math.PI * 2);
+      ctx.roundRect(-w * 0.58, h * 0.4, w * 1.16, h * 0.55, 10);
       ctx.fill();
 
-      const cabGrad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
-      cabGrad.addColorStop(0, '#9f4c3d');
-      cabGrad.addColorStop(1, '#7c2f25');
-      ctx.fillStyle = cabGrad;
-      ctx.roundRect(-w / 2, -h * 0.1, w * 0.55, h * 1.1, 10);
+      ctx.fillStyle = '#2f2f2f';
+      for (let i = -2; i <= 2; i++) {
+        ctx.beginPath();
+        ctx.arc(i * w * 0.18, h * 0.95, h * 0.23, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const hullGrad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
+      hullGrad.addColorStop(0, '#76856c');
+      hullGrad.addColorStop(1, '#4b5a41');
+      ctx.fillStyle = hullGrad;
+      ctx.roundRect(-w / 2, -h * 0.2, w, h * 1.1, 10);
       ctx.fill();
 
-      const cargoGrad = ctx.createLinearGradient(0, -h, 0, h * 1.2);
-      cargoGrad.addColorStop(0, '#c7c7c7');
-      cargoGrad.addColorStop(1, '#8e8e8e');
-      ctx.fillStyle = cargoGrad;
-      ctx.roundRect(-w * 0.05, -h * 0.25, w * 0.55, h * 1.3, 6);
+      const turretGrad = ctx.createLinearGradient(0, -h, 0, h);
+      turretGrad.addColorStop(0, '#8b9c7e');
+      turretGrad.addColorStop(1, '#5c6a52');
+      ctx.fillStyle = turretGrad;
+      ctx.roundRect(-w * 0.18, -h * 0.35, w * 0.36, h * 0.85, 8);
       ctx.fill();
 
-      ctx.fillStyle = '#f2f2f2';
-      ctx.fillRect(-w * 0.45, -h * 0.02, w * 0.2, h * 0.32);
+      ctx.fillStyle = '#c9d5c3';
+      ctx.fillRect(-w * 0.06, -h * 0.65, w * 0.12, h * 1.15);
       ctx.restore();
     }
 
     function drawBoat(p) {
       ctx.save();
-      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.5);
-      const w = p.size * 0.95;
-      const h = p.size * 0.4;
+      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.52);
+      const w = p.size * 0.98;
+      const h = p.size * 0.42;
 
       const hullGrad = ctx.createLinearGradient(0, -h, 0, h);
       hullGrad.addColorStop(0, '#4a7080');
@@ -580,8 +731,8 @@
 
     function drawFruit(p) {
       ctx.save();
-      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.4);
-      const r = p.size * 0.24;
+      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.42);
+      const r = p.size * 0.28;
       const bodyGrad = ctx.createRadialGradient(-r * 0.2, -r * 0.2, r * 0.3, 0, 0, r * 1.4);
       bodyGrad.addColorStop(0, '#ffefab');
       bodyGrad.addColorStop(1, '#f07b3d');
@@ -609,7 +760,7 @@
     function drawThreats() {
       threats.forEach((p) => {
         if (p.type === 'jeep') drawJeep(p);
-        else if (p.type === 'truck') drawTruck(p);
+        else if (p.type === 'tank') drawTank(p);
         else if (p.type === 'boat') drawBoat(p);
         else drawFruit(p);
       });
@@ -632,12 +783,17 @@
       requestAnimationFrame(loop);
     }
 
-    function endGame() {
+    function endGame(allowRevive = true) {
       world.running = false;
+      const cost = reviveCost();
+      const canRevive = allowRevive && world.coins >= cost;
       overlay.classList.remove('hidden');
-      overlay.querySelector('h1').textContent = '游戏结束';
-      overlay.querySelector('p').textContent = `最终得分：${world.score}`;
-      startBtn.textContent = '再来一局';
+      overlay.dataset.state = canRevive ? 'revive' : 'start';
+      overlay.querySelector('h1').textContent = world.failureReason || '防线失守';
+      overlay.querySelector('p').innerHTML = canRevive
+        ? `可消耗 <strong>${cost}</strong> 金币复活（当前 ${world.coins}）。`
+        : `金币不足以复活（需要 ${cost}，当前 ${world.coins}），可重新起飞。`;
+      startBtn.textContent = canRevive ? `消耗 ${cost} 金币复活` : '重新起飞';
     }
 
     function spawnBurst(x, y, color, count = 8, strength = 0.8) {
