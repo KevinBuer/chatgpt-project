@@ -23,11 +23,12 @@
       position: relative;
       width: 520px;
       height: 780px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-      border-radius: 14px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+      border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: linear-gradient(#0c1222 0%, #0c1222 70%, #0b1a2e 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: radial-gradient(circle at 50% -20%, rgba(68, 107, 154, 0.08), rgba(12, 18, 34, 0.5)),
+        linear-gradient(#0c1222 0%, #0c1222 70%, #0b1a2e 100%);
     }
 
     #hud {
@@ -148,6 +149,7 @@
     };
 
     const bullets = [];
+    const effects = [];
     const threats = [];
     const keys = { left: false, right: false, space: false };
     let spawnTimer = 0;
@@ -209,6 +211,7 @@
       if (timestamp - tank.lastShot < tank.cooldown) return;
       tank.lastShot = timestamp;
       bullets.push({ x: tank.x, y: tank.y - 10, speed: 540 });
+      spawnBurst(tank.x, tank.y - 16, '#ffdd88', 4, 0.4);
     }
 
     function update(delta, timestamp) {
@@ -238,6 +241,15 @@
           if (threats[i].type !== 'fruit') loseLife();
           threats.splice(i, 1);
         }
+      }
+
+      effects.forEach((e) => {
+        e.x += e.vx * delta;
+        e.y += e.vy * delta;
+        e.life -= delta;
+      });
+      for (let i = effects.length - 1; i >= 0; i--) {
+        if (effects[i].life <= 0) effects.splice(i, 1);
       }
 
       checkCollision();
@@ -272,10 +284,13 @@
               if (p.type === 'fruit') {
                 world.score += 2;
                 if (world.lives < 5) world.lives += 1;
+                spawnBurst(p.x + p.size / 2, p.y + p.size * 0.2, '#ffb347', 8, 0.9);
               } else if (p.type === 'tank') {
                 world.score += 2;
+                spawnBurst(p.x + p.size / 2, p.y + p.size * 0.3, '#f0ddc2', 12, 1.1);
               } else {
                 world.score += 1;
+                spawnBurst(p.x + p.size / 2, p.y + p.size * 0.2, '#9cd2ff', 10, 0.8);
               }
               threats.splice(i, 1);
               updateHud();
@@ -299,6 +314,7 @@
             updateHud();
           } else {
             loseLife();
+            spawnBurst(tank.x, tank.y - 18, '#ff8b74', 14, 1.2);
           }
         }
       }
@@ -311,11 +327,14 @@
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, world.width, world.height);
 
-      ctx.fillStyle = 'rgba(255,255,255,0.04)';
-      for (let i = 0; i < 18; i++) {
-        const x = (world.width / 18) * i + 6;
-        ctx.fillRect(x, 0, 1, world.height);
+      ctx.save();
+      ctx.globalAlpha = 0.28;
+      ctx.fillStyle = '#1a2d44';
+      for (let i = 0; i < 26; i++) {
+        const x = (world.width / 26) * i + 4;
+        ctx.fillRect(x, 0, 2, world.height);
       }
+      ctx.restore();
 
       ctx.fillStyle = 'rgba(255,255,255,0.06)';
       ctx.beginPath();
@@ -328,20 +347,33 @@
       ctx.ellipse(world.width * 0.75, world.height * 0.45, 90, 24, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = '#0f1b2a';
-      ctx.fillRect(0, world.height - 80, world.width, 90);
-      ctx.fillStyle = '#162234';
-      for (let i = 0; i < world.width; i += 40) {
-        ctx.fillRect(i + 8, world.height - 72, 16, 64);
+      ctx.fillStyle = '#0e1928';
+      ctx.fillRect(0, world.height - 100, world.width, 110);
+      const runwayGrad = ctx.createLinearGradient(0, world.height - 92, 0, world.height - 12);
+      runwayGrad.addColorStop(0, '#121e31');
+      runwayGrad.addColorStop(1, '#0b111e');
+      ctx.fillStyle = runwayGrad;
+      ctx.fillRect(0, world.height - 92, world.width, 86);
+
+      ctx.fillStyle = '#1c2f46';
+      for (let i = 0; i < world.width; i += 46) {
+        ctx.fillRect(i + 10, world.height - 84, 18, 74);
       }
-      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-      ctx.setLineDash([10, 12]);
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.setLineDash([9, 10]);
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(0, world.height - 40);
-      ctx.lineTo(world.width, world.height - 40);
+      ctx.moveTo(0, world.height - 46);
+      ctx.lineTo(world.width, world.height - 46);
       ctx.stroke();
       ctx.setLineDash([]);
+
+      ctx.fillStyle = '#f7c86c';
+      for (let i = 10; i < world.width; i += 58) {
+        ctx.beginPath();
+        ctx.arc(i + 12, world.height - 18, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     function drawTank() {
@@ -393,6 +425,23 @@
         ctx.fillStyle = '#fff6d5';
         ctx.fillRect(b.x - 1.5, b.y - 18, 3, 4);
       });
+    }
+
+    function drawEffects() {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      effects.forEach((e) => {
+        const alpha = Math.max(0, e.life / e.maxLife);
+        const r = e.size * alpha;
+        const grad = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, r);
+        grad.addColorStop(0, e.color);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.restore();
     }
 
     function drawPlane(p) {
@@ -507,6 +556,7 @@
       drawBackground();
       drawTank();
       drawBullets();
+      drawEffects();
       drawThreats();
     }
 
@@ -525,6 +575,23 @@
       overlay.querySelector('h1').textContent = '游戏结束';
       overlay.querySelector('p').textContent = `最终得分：${world.score}`;
       startBtn.textContent = '再来一局';
+    }
+
+    function spawnBurst(x, y, color, count = 8, strength = 0.8) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = (Math.random() * 80 + 70) * strength;
+        effects.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 16 + Math.random() * 10,
+          color,
+          life: 0.5 + Math.random() * 0.35,
+          maxLife: 0.5 + Math.random() * 0.35,
+        });
+      }
     }
 
     draw();
