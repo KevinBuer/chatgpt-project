@@ -18,80 +18,28 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       padding: 24px;
     }
 
-    #layout {
-      position: relative;
+    #page {
       display: flex;
-      align-items: flex-start;
-      gap: 18px;
-    }
-
-    #tipStrip {
-      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 6px;
-      padding: 14px 10px;
-      background: linear-gradient(145deg, #fff4e0, #ffd7bf);
-      border: 2px solid #ff9c7a;
-      box-shadow: 0 12px 26px rgba(255, 138, 109, 0.18);
-      border-radius: 18px;
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
-      letter-spacing: 1px;
-      font-size: 14px;
-      color: #5c4b3d;
+      gap: 14px;
     }
 
-    #tipStrip .label {
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 10px;
-      background: linear-gradient(145deg, #ffb48f, #ff8d6f);
-      color: #fffdf6;
-      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
-    }
-
-    #tipStrip .text {
-      writing-mode: vertical-rl;
-      line-height: 1.4;
-      text-align: center;
-      padding-top: 4px;
-    }
-
-    #frame {
-      position: relative;
-      width: 560px;
-      height: 820px;
-      border-radius: 26px;
-      overflow: hidden;
-      background: linear-gradient(160deg, #ffffff 0%, #fff6ec 40%, #ffe2d3 100%);
-      box-shadow: 0 28px 42px rgba(108, 76, 59, 0.18), inset 0 0 0 8px #ffd8b8, inset 0 0 0 14px #f7b78d;
-      border: 2px solid #f08c63;
-    }
-
-    #hud {
-      position: absolute;
-      top: 12px;
-      left: 0;
-      right: 0;
+    #topControls {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 10px;
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    #topbar {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      width: calc(100% - 38px);
-      pointer-events: none;
+      padding: 14px 16px;
+      background: linear-gradient(180deg, rgba(255, 247, 236, 0.95), rgba(255, 226, 205, 0.92));
+      border-radius: 18px;
+      border: 2px solid #f08c63;
+      box-shadow: 0 16px 28px rgba(255, 161, 124, 0.24), inset 0 0 0 3px #ffd7b5;
+      width: 640px;
     }
 
     #panel {
@@ -102,9 +50,9 @@
       background: linear-gradient(180deg, #fff6ea, #ffe4d0);
       padding: 10px 12px;
       border-radius: 16px;
-      box-shadow: 0 14px 26px rgba(255, 161, 124, 0.2), inset 0 0 0 3px #ffd7b5;
+      box-shadow: 0 12px 24px rgba(255, 161, 124, 0.18), inset 0 0 0 3px #ffd7b5;
       border: 2px solid #f08c63;
-      pointer-events: auto;
+      width: 100%;
     }
 
     .pill {
@@ -170,6 +118,66 @@
       background: linear-gradient(145deg, #ffb48f, #ff8d6f);
       color: #fffdf6;
       box-shadow: 0 8px 0 #d86f4c, 0 14px 26px rgba(216, 111, 76, 0.26);
+    }
+
+    #topButtons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    #layout {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+
+    #tipStrip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 20px 12px;
+      background: linear-gradient(145deg, #fff4e0, #ffd7bf);
+      border: 2px solid #ff9c7a;
+      box-shadow: 0 12px 26px rgba(255, 138, 109, 0.18);
+      border-radius: 20px;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      letter-spacing: 1px;
+      font-size: 14px;
+      color: #5c4b3d;
+      height: 820px;
+      justify-content: center;
+    }
+
+    #tipStrip .label {
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #ffb48f, #ff8d6f);
+      color: #fffdf6;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+    }
+
+    #tipStrip .text {
+      writing-mode: vertical-rl;
+      line-height: 1.6;
+      text-align: center;
+      padding-top: 4px;
+    }
+
+    #frame {
+      position: relative;
+      width: 560px;
+      height: 820px;
+      border-radius: 26px;
+      overflow: hidden;
+      background: linear-gradient(160deg, #ffffff 0%, #fff6ec 40%, #ffe2d3 100%);
+      box-shadow: 0 28px 42px rgba(108, 76, 59, 0.18), inset 0 0 0 8px #ffd8b8, inset 0 0 0 14px #f7b78d;
+      border: 2px solid #f08c63;
     }
 
     #game {
@@ -238,34 +246,37 @@
   </style>
 </head>
 <body>
-  <div id="layout">
-    <div id="tipStrip">
-      <span class="label">提示</span>
-      <span class="text">按左右/AD 移动<br />飞机防守补给线</span>
-    </div>
-    <div id="frame">
-      <div id="hud">
-        <div id="topbar">
-          <div id="panel">
-            <span class="pill">分数 <strong id="score">0</strong></span>
-            <span class="pill">金币 <strong id="coins">0</strong></span>
-            <span class="pill">生命 <strong id="lives">3</strong></span>
-            <span class="pill">武装 <strong id="power">基础机炮</strong></span>
-            <span class="pill">机型 <strong id="airframe">教练机</strong></span>
-          </div>
-          <div id="difficultyRow">
-            <span class="label" id="difficultyLabel">难度</span>
-            <button class="chip active" data-difficulty="easy">轻松</button>
-            <button class="chip" data-difficulty="normal">标准</button>
-            <button class="chip" data-difficulty="hard">硬核</button>
-          </div>
+  <div id="page">
+    <div id="topControls">
+      <div id="panel">
+        <span class="pill">分数 <strong id="score">0</strong></span>
+        <span class="pill">金币 <strong id="coins">0</strong></span>
+        <span class="pill">生命 <strong id="lives">3</strong></span>
+        <span class="pill">武装 <strong id="power">基础机炮</strong></span>
+        <span class="pill">机型 <strong id="airframe">教练机</strong></span>
+      </div>
+      <div id="topButtons">
+        <button id="start">开始 / 复活</button>
+        <div id="difficultyRow">
+          <span class="label" id="difficultyLabel">难度</span>
+          <button class="chip active" data-difficulty="easy">轻松</button>
+          <button class="chip" data-difficulty="normal">标准</button>
+          <button class="chip" data-difficulty="hard">硬核</button>
         </div>
       </div>
-      <canvas id="game" width="560" height="820"></canvas>
-      <div id="overlay" data-state="start">
-        <h1>飞机突袭交通线</h1>
-        <p>驾驶美军前线攻击机，守住补给线，摧毁前方载具与伪装补给。</p>
-        <button id="start">起飞</button>
+    </div>
+
+    <div id="layout">
+      <div id="tipStrip">
+        <span class="label">提示</span>
+        <span class="text">长形提示条放在一侧<br />移动目标时按上下左右</span>
+      </div>
+      <div id="frame">
+        <canvas id="game" width="560" height="820"></canvas>
+        <div id="overlay" data-state="start">
+          <h1>飞机突袭交通线</h1>
+          <p>驾驶美军前线攻击机，守住补给线，摧毁前方载具与伪装补给。</p>
+        </div>
       </div>
     </div>
   </div>
@@ -389,7 +400,7 @@
       overlay.dataset.state = 'start';
       overlay.querySelector('h1').textContent = '飞机突袭交通线';
       overlay.querySelector('p').textContent = '驾驶美军前线攻击机，守住补给线，摧毁前方载具与伪装补给。';
-      startBtn.textContent = '起飞';
+      startBtn.textContent = '开始 / 复活';
       requestAnimationFrame(loop);
     }
 
