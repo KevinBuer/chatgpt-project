@@ -162,7 +162,8 @@
         <span class="pill">分数 <strong id="score">0</strong></span>
         <span class="pill">金币 <strong id="coins">0</strong></span>
         <span class="pill">生命 <strong id="lives">3</strong></span>
-        <span class="pill">火力 <strong id="power">1</strong></span>
+        <span class="pill">武装 <strong id="power">基础机炮</strong></span>
+        <span class="pill">机型 <strong id="airframe">教练机</strong></span>
       </div>
     </div>
     <canvas id="game" width="560" height="820"></canvas>
@@ -180,8 +181,26 @@
     const coinsEl = document.getElementById('coins');
     const livesEl = document.getElementById('lives');
     const powerEl = document.getElementById('power');
+    const airframeEl = document.getElementById('airframe');
     const overlay = document.getElementById('overlay');
     const startBtn = document.getElementById('start');
+
+    const airframes = [
+      { name: '教练机', size: 1, color: '#7ed8ff' },
+      { name: '前线攻击机', size: 1.05, color: '#7ec8ff' },
+      { name: '大黄蜂', size: 1.12, color: '#73b4ff' },
+      { name: 'F-35', size: 1.18, color: '#6da2ff' },
+      { name: 'F-22', size: 1.25, color: '#5b90ff' },
+      { name: 'B-2 幽灵', size: 1.32, color: '#4f7ded' },
+    ];
+
+    const weaponStages = [
+      { label: '基础机炮', cooldown: 260, damage: 1 },
+      { label: '三向霰弹', cooldown: 220, damage: 1 },
+      { label: '霰弹+微导弹', cooldown: 180, damage: 1.2 },
+      { label: '激光切割', cooldown: 160, damage: 1.4 },
+      { label: '轨道炮+风暴', cooldown: 140, damage: 1.6 },
+    ];
 
     const world = {
       width: canvas.width,
@@ -287,18 +306,20 @@
       scoreEl.textContent = world.score;
       coinsEl.textContent = world.coins;
       livesEl.textContent = world.lives;
-      powerEl.textContent = firepowerLevel();
+      powerEl.textContent = weaponStages[weaponStageIndex()].label;
+      airframeEl.textContent = currentAirframe().name;
     }
 
     function spawnThreat() {
       const roll = Math.random();
-      const level = firepowerLevel();
-      const bulk = 1 + (level - 1) * 0.18 + Math.min(0.3, world.score * 0.003);
+      const level = weaponStageIndex();
+      const hull = airframeStage();
+      const bulk = 1 + level * 0.22 + hull * 0.18 + Math.min(0.4, world.score * 0.003);
       const baseSize = 48 + Math.random() * 22;
       const size = baseSize * bulk;
       const x = Math.random() * (world.width - size - 28) + 14;
       const sway = (Math.random() * 2 - 1) * 55;
-      const toughness = Math.max(0, level - 1) + Math.floor(world.score / 50);
+      const toughness = Math.max(0, level) + hull + Math.floor(world.score / 45);
       const common = { x, y: -size, size, sway, offset: Math.random() * Math.PI * 2 };
 
       if (roll > 0.8) {
@@ -318,27 +339,91 @@
       }
     }
 
-    function firepowerLevel() {
-      if (world.score >= 120) return 3;
-      if (world.score >= 50) return 2;
-      return 1;
+    function weaponStageIndex() {
+      if (world.score >= 420) return 4;
+      if (world.score >= 280) return 3;
+      if (world.score >= 170) return 2;
+      if (world.score >= 90) return 1;
+      return 0;
+    }
+
+    function airframeStage() {
+      if (world.coins >= 600) return 5;
+      if (world.coins >= 420) return 4;
+      if (world.coins >= 260) return 3;
+      if (world.coins >= 150) return 2;
+      if (world.coins >= 60) return 1;
+      return 0;
+    }
+
+    function currentAirframe() {
+      return airframes[airframeStage()];
     }
 
     function shoot(timestamp) {
-      const level = firepowerLevel();
-      const cooldown = Math.max(120, plane.baseCooldown - (level - 1) * 60);
+      const level = weaponStageIndex();
+      const weapon = weaponStages[level];
+      const cooldown = Math.max(110, weapon.cooldown - level * 12);
       if (timestamp - plane.lastShot < cooldown) return;
       plane.lastShot = timestamp;
 
-      const offsets = level === 1 ? [0] : level === 2 ? [-12, 12] : [-16, 0, 16];
-      offsets.forEach((ox, idx) => {
-        const spread = level === 3 && idx !== 1 ? 80 : 0;
-        bullets.push({ x: plane.x + ox, y: plane.y - 20, speed: 660 + level * 30, vx: spread === 0 ? 0 : ox > 0 ? spread : -spread });
-      });
-      spawnBurst(plane.x, plane.y - 18, '#ffd77a', 4 + level * 2, 0.55 + level * 0.12);
+      const baseDamage = weapon.damage;
+      if (level === 0) {
+        [-12, 12].forEach((ox) => bullets.push(makeBullet('cannon', plane.x + ox, plane.y - 16, baseDamage, 680, 0)));
+      } else if (level === 1) {
+        [-22, 0, 22].forEach((ox) => bullets.push(makeBullet('spread', plane.x + ox, plane.y - 18, baseDamage, 720, ox * 9)));
+      } else if (level === 2) {
+        [-22, 0, 22].forEach((ox) => bullets.push(makeBullet('spread', plane.x + ox, plane.y - 18, baseDamage, 760, ox * 11)));
+        [-16, 16].forEach((ox) => bullets.push(makeBullet('missile', plane.x + ox, plane.y - 26, baseDamage * 2, 520, ox * 2)));
+      } else if (level === 3) {
+        [-24, 0, 24].forEach((ox) => bullets.push(makeBullet('spread', plane.x + ox, plane.y - 18, baseDamage, 820, ox * 12)));
+        [-24, 24].forEach((ox) => bullets.push(makeBullet('missile', plane.x + ox, plane.y - 26, baseDamage * 2, 560, ox * 4)));
+        bullets.push(makeBullet('laser', plane.x, plane.y - 28, baseDamage * 1.6, 0, 0));
+      } else {
+        [-26, 0, 26].forEach((ox) => bullets.push(makeBullet('rail', plane.x + ox, plane.y - 20, baseDamage * 2.4, 900, ox * 10)));
+        [-28, 28].forEach((ox) => bullets.push(makeBullet('missile', plane.x + ox, plane.y - 30, baseDamage * 2.2, 620, ox * 6)));
+        bullets.push(makeBullet('storm', plane.x, plane.y - 18, baseDamage * 1.6, 640, 0));
+      }
+
+      spawnBurst(plane.x, plane.y - 18, '#ffd77a', 4 + level * 3, 0.55 + level * 0.15);
+    }
+
+    function makeBullet(type, x, y, damage, speed, vx = 0) {
+      const config = {
+        cannon: { width: 8, height: 26, pierce: 1 },
+        spread: { width: 9, height: 28, pierce: 1 },
+        missile: { width: 16, height: 34, pierce: 1, seek: true },
+        laser: { width: 18, height: 160, pierce: 4, persistent: true, life: 0.28 },
+        rail: { width: 12, height: 52, pierce: 3 },
+        storm: { width: 34, height: 34, pierce: 2, swirl: true },
+      }[type];
+
+      return {
+        type,
+        x,
+        y,
+        vx,
+        speed,
+        damage,
+        width: config.width,
+        height: config.height,
+        pierce: config.pierce,
+        persistent: !!config.persistent,
+        life: config.life || 2,
+        seek: !!config.seek,
+        swirl: !!config.swirl,
+        angle: 0,
+      };
     }
 
     function update(delta, timestamp) {
+      const hull = currentAirframe();
+      plane.width = 82 * hull.size;
+      plane.height = 86 * hull.size;
+      plane.bodyColor = hull.color;
+      plane.speedX = 360 + airframeStage() * 12;
+      plane.speedY = 300 + airframeStage() * 10;
+
       const moveX = plane.speedX * delta;
       const moveY = plane.speedY * delta;
       if (keys.left) plane.x -= moveX;
@@ -350,11 +435,31 @@
       if (keys.space) shoot(timestamp);
 
       bullets.forEach((b) => {
-        b.y -= b.speed * delta;
-        if (b.vx) b.x += b.vx * delta;
+        if (b.type === 'laser') {
+          b.x = plane.x;
+          b.y = plane.y - 32;
+          b.life -= delta;
+        } else {
+          if (b.seek && threats.length) {
+            const target = threats[0];
+            const dir = Math.sign(target.x + target.size / 2 - b.x);
+            b.vx += dir * 28 * delta;
+          }
+          if (b.swirl) {
+            b.angle += delta * 6;
+            b.vx = Math.sin(b.angle) * 160;
+          }
+          b.y -= b.speed * delta;
+          if (b.vx) b.x += b.vx * delta;
+        }
       });
       for (let i = bullets.length - 1; i >= 0; i--) {
-        if (bullets[i].y < -20 || bullets[i].x < -30 || bullets[i].x > world.width + 30) bullets.splice(i, 1);
+        const b = bullets[i];
+        if (b.persistent) {
+          if (b.life <= 0) bullets.splice(i, 1);
+        } else if (b.y < -60 || b.x < -50 || b.x > world.width + 50) {
+          bullets.splice(i, 1);
+        }
       }
 
       spawnTimer += delta;
@@ -423,19 +528,24 @@
 
         for (let j = bullets.length - 1; j >= 0; j--) {
           const b = bullets[j];
-          const bx1 = b.x - 2.5;
-          const bx2 = b.x + 2.5;
-          const by1 = b.y - 16;
-          const by2 = b.y + 2;
+          const bx1 = b.x - b.width / 2;
+          const bx2 = b.x + b.width / 2;
+          const by1 = b.y - b.height;
+          const by2 = b.y + 4;
 
           if (bx1 < px2 && bx2 > px1 && by1 < py2 && by2 > py1) {
-            bullets.splice(j, 1);
-            p.hp -= 1;
-            spawnBurst(b.x, b.y, '#ffd48a', 5, 0.6);
+            p.hp -= b.damage;
+            b.pierce -= 1;
+            spawnBurst(b.x, b.y, b.type === 'laser' ? '#9bd4ff' : '#ffd48a', 6, 0.6 + 0.2 * b.damage);
             if (p.hp <= 0) {
               grantReward(p);
               threats.splice(i, 1);
               updateHud();
+            }
+            if (!b.persistent && b.pierce <= 0) {
+              bullets.splice(j, 1);
+            } else if (b.persistent && b.pierce <= 0) {
+              b.life = Math.min(b.life, 0.05);
             }
             break;
           }
@@ -489,58 +599,70 @@
       ctx.clearRect(0, 0, world.width, world.height);
 
       const sky = ctx.createLinearGradient(0, 0, 0, world.height);
-      sky.addColorStop(0, '#b7e7ff');
-      sky.addColorStop(0.5, '#c6f3ff');
-      sky.addColorStop(1, '#fdf8ec');
+      sky.addColorStop(0, '#bcdcff');
+      sky.addColorStop(0.55, '#dff2ff');
+      sky.addColorStop(1, '#ffeede');
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, world.width, world.height);
 
-      // fluffy clouds
-      const cloudColors = ['rgba(255,255,255,0.65)', 'rgba(255,255,255,0.55)', 'rgba(255,255,255,0.4)'];
-      for (let i = 0; i < 9; i++) {
-        const cx = (i * 62 + 30) % world.width;
-        const cy = (i * 34 + 80) % (world.height * 0.45);
-        const r = 22 + (i % 4) * 8;
-        ctx.fillStyle = cloudColors[i % cloudColors.length];
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, r * 1.6, r, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(cx + r * 0.9, cy - r * 0.2, r * 1.2, r * 0.9, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(cx - r * 1.1, cy - r * 0.1, r * 1.1, r * 0.85, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
+      const sun = ctx.createRadialGradient(world.width * 0.18, world.height * 0.18, 10, world.width * 0.18, world.height * 0.18, 180);
+      sun.addColorStop(0, 'rgba(255,255,255,0.95)');
+      sun.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = sun;
+      ctx.fillRect(0, 0, world.width, world.height);
 
-      // pastel roadway / river band
-      ctx.fillStyle = '#f7d2a3';
-      ctx.fillRect(0, world.height * 0.55, world.width, world.height * 0.5);
-      ctx.fillStyle = '#fff1cc';
-      for (let i = 0; i < world.width; i += 52) {
-        ctx.beginPath();
-        ctx.roundRect(i - 8, world.height * 0.58, 42, 18, 10);
-        ctx.fill();
-      }
+      const horizonY = world.height * 0.46;
+      const ground = ctx.createLinearGradient(0, horizonY, 0, world.height);
+      ground.addColorStop(0, '#f4d4ae');
+      ground.addColorStop(1, '#d8a57c');
+      ctx.fillStyle = ground;
+      ctx.fillRect(0, horizonY, world.width, world.height - horizonY);
 
-      // central lane
-      ctx.fillStyle = '#ffe1ba';
-      ctx.roundRect(34, world.height * 0.64, world.width - 68, world.height * 0.26, 24);
-      ctx.fill();
-
-      ctx.strokeStyle = '#ff9f80';
-      ctx.lineWidth = 4;
-      ctx.setLineDash([12, 12]);
+      // perspective runway
+      ctx.save();
+      ctx.translate(world.width / 2, horizonY);
       ctx.beginPath();
-      ctx.moveTo(48, world.height * 0.77);
-      ctx.lineTo(world.width - 48, world.height * 0.77);
+      ctx.moveTo(-world.width * 0.38, world.height * 0.6);
+      ctx.lineTo(world.width * 0.38, world.height * 0.6);
+      ctx.lineTo(world.width * 0.16, 0);
+      ctx.lineTo(-world.width * 0.16, 0);
+      ctx.closePath();
+      const strip = ctx.createLinearGradient(0, 0, 0, world.height * 0.6);
+      strip.addColorStop(0, '#ffe5c5');
+      strip.addColorStop(1, '#f2c38f');
+      ctx.fillStyle = strip;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,182,124,0.6)';
+      ctx.lineWidth = 10;
       ctx.stroke();
-      ctx.setLineDash([]);
 
-      ctx.fillStyle = '#ffd39e';
-      for (let i = 22; i < world.width; i += 78) {
+      // grid lines
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth = 3;
+      for (let i = 0; i < 10; i++) {
         ctx.beginPath();
-        ctx.ellipse(i + 16, world.height * 0.91, 9, 6.5, 0, 0, Math.PI * 2);
+        ctx.moveTo(-world.width * 0.42 + i * (world.width * 0.084), world.height * 0.6);
+        ctx.lineTo(-world.width * 0.16 + i * (world.width * 0.032), 0);
+        ctx.stroke();
+      }
+      ctx.lineWidth = 6;
+      ctx.setLineDash([24, 24]);
+      ctx.beginPath();
+      ctx.moveTo(0, world.height * 0.6);
+      ctx.lineTo(0, 0);
+      ctx.stroke();
+      ctx.restore();
+
+      // cloud layers
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      for (let i = 0; i < 12; i++) {
+        const cx = (i * 46 + 30) % world.width;
+        const cy = (i * 38 + 60) % (world.height * 0.34);
+        const r = 26 + (i % 4) * 6;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, r * 1.8, r, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx + r, cy + 8, r * 1.2, r * 0.8, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx - r, cy + 6, r * 1.4, r * 0.9, 0, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -556,73 +678,88 @@
       ctx.save();
       ctx.translate(plane.x, plane.y);
       ctx.lineJoin = 'round';
-      const outline = '#345';
+      const outline = '#30445e';
       ctx.strokeStyle = outline;
       ctx.lineWidth = 4;
 
+      const gradientWing = ctx.createLinearGradient(-plane.width * 0.8, -plane.height * 0.1, plane.width * 0.8, plane.height * 0.2);
+      gradientWing.addColorStop(0, '#ffe9b4');
+      gradientWing.addColorStop(1, '#ffd27f');
+
+      const gradientBody = ctx.createLinearGradient(0, -plane.height * 0.6, 0, plane.height * 0.68);
+      gradientBody.addColorStop(0, '#ffffff');
+      gradientBody.addColorStop(0.28, plane.bodyColor || '#7ed8ff');
+      gradientBody.addColorStop(1, '#3a4f63');
+
       // wings
-      ctx.fillStyle = '#ffe68a';
+      ctx.fillStyle = gradientWing;
       ctx.beginPath();
-      ctx.moveTo(-plane.width * 0.75, -plane.height * 0.02);
-      ctx.lineTo(plane.width * 0.75, -plane.height * 0.12);
-      ctx.lineTo(plane.width * 0.64, plane.height * 0.16);
-      ctx.lineTo(-plane.width * 0.64, plane.height * 0.28);
+      ctx.moveTo(-plane.width * 0.86, plane.height * 0.02);
+      ctx.lineTo(plane.width * 0.86, -plane.height * 0.16);
+      ctx.lineTo(plane.width * 0.72, plane.height * 0.18);
+      ctx.lineTo(-plane.width * 0.68, plane.height * 0.32);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
 
-      // body
-      ctx.fillStyle = '#7ed8ff';
+      // fuselage
+      ctx.fillStyle = gradientBody;
       ctx.beginPath();
-      ctx.roundRect(-plane.width * 0.22, -plane.height * 0.6, plane.width * 0.44, plane.height * 1.24, 16);
+      ctx.roundRect(-plane.width * 0.24, -plane.height * 0.66, plane.width * 0.48, plane.height * 1.32, 18);
       ctx.fill();
       ctx.stroke();
 
-      // tail
-      ctx.fillStyle = '#fcb46c';
+      // shadowed belly
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
       ctx.beginPath();
-      ctx.moveTo(-plane.width * 0.36, plane.height * 0.24);
-      ctx.lineTo(plane.width * 0.36, plane.height * 0.08);
-      ctx.lineTo(plane.width * 0.3, plane.height * 0.66);
-      ctx.lineTo(-plane.width * 0.28, plane.height * 0.78);
+      ctx.roundRect(-plane.width * 0.22, plane.height * 0.1, plane.width * 0.44, plane.height * 0.62, 14);
+      ctx.fill();
+
+      // tailplane
+      ctx.fillStyle = '#ffb783';
+      ctx.beginPath();
+      ctx.moveTo(-plane.width * 0.42, plane.height * 0.24);
+      ctx.lineTo(plane.width * 0.42, plane.height * 0.08);
+      ctx.lineTo(plane.width * 0.32, plane.height * 0.78);
+      ctx.lineTo(-plane.width * 0.32, plane.height * 0.88);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
 
-      // cockpit
-      ctx.fillStyle = '#fefdf5';
+      // cockpit glass
+      const cockpit = ctx.createLinearGradient(0, -plane.height * 0.48, 0, -plane.height * 0.12);
+      cockpit.addColorStop(0, '#d9f2ff');
+      cockpit.addColorStop(1, '#6fb2ff');
+      ctx.fillStyle = cockpit;
       ctx.beginPath();
-      ctx.roundRect(-plane.width * 0.2, -plane.height * 0.44, plane.width * 0.4, plane.height * 0.28, 12);
+      ctx.roundRect(-plane.width * 0.22, -plane.height * 0.44, plane.width * 0.44, plane.height * 0.32, 14);
       ctx.fill();
       ctx.stroke();
 
-      // nose and prop cap
+      // nose cap
       ctx.fillStyle = '#ff8f6f';
       ctx.beginPath();
-      ctx.moveTo(0, -plane.height * 0.74);
-      ctx.lineTo(-plane.width * 0.14, -plane.height * 0.5);
-      ctx.lineTo(plane.width * 0.14, -plane.height * 0.5);
+      ctx.moveTo(0, -plane.height * 0.78);
+      ctx.lineTo(-plane.width * 0.16, -plane.height * 0.5);
+      ctx.lineTo(plane.width * 0.16, -plane.height * 0.5);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
 
-      ctx.fillStyle = '#fff6d2';
-      ctx.beginPath();
-      ctx.arc(0, -plane.height * 0.74, plane.width * 0.1, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // intake dots
+      // engine intakes
       ctx.fillStyle = '#2f3d4d';
       ctx.beginPath();
-      ctx.arc(-plane.width * 0.35, plane.height * 0.06, plane.width * 0.08, 0, Math.PI * 2);
-      ctx.arc(plane.width * 0.35, -plane.height * 0.02, plane.width * 0.08, 0, Math.PI * 2);
+      ctx.arc(-plane.width * 0.34, plane.height * 0.04, plane.width * 0.08, 0, Math.PI * 2);
+      ctx.arc(plane.width * 0.34, -plane.height * 0.02, plane.width * 0.08, 0, Math.PI * 2);
       ctx.fill();
 
-      // belly light
+      // rim lights
       ctx.fillStyle = '#fff6d2';
       ctx.beginPath();
-      ctx.arc(0, plane.height * 0.2, plane.width * 0.12, 0, Math.PI * 2);
+      ctx.arc(0, plane.height * 0.16, plane.width * 0.12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, -plane.height * 0.78, plane.width * 0.12, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.restore();
@@ -630,17 +767,64 @@
 
     function drawBullets() {
       bullets.forEach((b) => {
-        ctx.fillStyle = '#ffce6f';
-        ctx.strokeStyle = '#e47051';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.roundRect(b.x - 3.4, b.y - 18, 6.8, 20, 4);
-        ctx.fill();
-        ctx.stroke();
-        ctx.fillStyle = '#fff7d9';
-        ctx.beginPath();
-        ctx.arc(b.x, b.y - 16, 2.8, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.save();
+        if (b.type === 'laser') {
+          const beam = ctx.createLinearGradient(b.x, b.y - b.height, b.x, b.y);
+          beam.addColorStop(0, 'rgba(130,198,255,0)');
+          beam.addColorStop(0.5, 'rgba(130,198,255,0.7)');
+          beam.addColorStop(1, 'rgba(58,120,220,0.9)');
+          ctx.fillStyle = beam;
+          ctx.shadowColor = 'rgba(120,180,255,0.7)';
+          ctx.shadowBlur = 24;
+          ctx.beginPath();
+          ctx.roundRect(b.x - b.width / 2, b.y - b.height, b.width, b.height, 12);
+          ctx.fill();
+        } else if (b.type === 'missile') {
+          ctx.fillStyle = '#ffbf7f';
+          ctx.strokeStyle = '#d55f3f';
+          ctx.lineWidth = 2.4;
+          ctx.beginPath();
+          ctx.roundRect(b.x - b.width / 2, b.y - b.height * 0.7, b.width, b.height * 0.7, 6);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#6c88a8';
+          ctx.beginPath();
+          ctx.moveTo(b.x - b.width / 2 - 4, b.y - b.height * 0.4);
+          ctx.lineTo(b.x, b.y - b.height * 0.2);
+          ctx.lineTo(b.x + b.width / 2 + 4, b.y - b.height * 0.4);
+          ctx.closePath();
+          ctx.fill();
+        } else if (b.type === 'rail') {
+          ctx.strokeStyle = '#9fb9ff';
+          ctx.lineWidth = 6;
+          ctx.shadowColor = 'rgba(140,176,255,0.8)';
+          ctx.shadowBlur = 16;
+          ctx.beginPath();
+          ctx.moveTo(b.x, b.y);
+          ctx.lineTo(b.x, b.y - b.height);
+          ctx.stroke();
+        } else if (b.type === 'storm') {
+          const grad = ctx.createRadialGradient(b.x, b.y, 4, b.x, b.y, b.width * 0.6);
+          grad.addColorStop(0, '#ffe188');
+          grad.addColorStop(1, 'rgba(255,140,90,0.7)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.width * 0.55, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = '#ffce6f';
+          ctx.strokeStyle = '#e47051';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.roundRect(b.x - b.width / 2, b.y - b.height * 0.9, b.width, b.height * 0.9, 4);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#fff7d9';
+          ctx.beginPath();
+          ctx.arc(b.x, b.y - b.height * 0.7, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
       });
     }
 
