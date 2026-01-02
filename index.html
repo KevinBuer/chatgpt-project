@@ -12,14 +12,53 @@
 
     body {
       margin: 0;
-      background: radial-gradient(circle at 25% 20%, #fef7d4, #f8d79c 38%, #f6b7a2 62%, #f5a1c3 90%);
+      background: radial-gradient(circle at 32% 18%, #ffe8c9, #ffc6a3 42%, #ffa9a0 80%);
       color: #3a2f2f;
       font-family: 'Baloo 2', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      padding: 18px;
+      padding: 24px;
+    }
+
+    #layout {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+
+    #tipStrip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 10px;
+      background: linear-gradient(145deg, #fff4e0, #ffd7bf);
+      border: 2px solid #ff9c7a;
+      box-shadow: 0 12px 26px rgba(255, 138, 109, 0.18);
+      border-radius: 18px;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      letter-spacing: 1px;
+      font-size: 14px;
+      color: #5c4b3d;
+    }
+
+    #tipStrip .label {
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #ffb48f, #ff8d6f);
+      color: #fffdf6;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+    }
+
+    #tipStrip .text {
+      writing-mode: vertical-rl;
+      line-height: 1.4;
+      text-align: center;
+      padding-top: 4px;
     }
 
     #frame {
@@ -28,63 +67,109 @@
       height: 820px;
       border-radius: 26px;
       overflow: hidden;
-      background: linear-gradient(160deg, #fefefe 0%, #fff6e8 35%, #ffe3d6 100%);
-      box-shadow: 0 28px 42px rgba(108, 76, 59, 0.18), inset 0 0 0 8px #fcd7a8, inset 0 0 0 12px #f7b78d;
-      border: 2px solid #e87b5a;
+      background: linear-gradient(160deg, #ffffff 0%, #fff6ec 40%, #ffe2d3 100%);
+      box-shadow: 0 28px 42px rgba(108, 76, 59, 0.18), inset 0 0 0 8px #ffd8b8, inset 0 0 0 14px #f7b78d;
+      border: 2px solid #f08c63;
     }
 
     #hud {
       position: absolute;
-      top: 14px;
-      left: 14px;
-      right: 14px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
+      top: 12px;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
       align-items: center;
+      gap: 10px;
       z-index: 2;
       pointer-events: none;
     }
 
-    #legend {
-      font-size: 13px;
-      line-height: 1.5;
-      color: #5c4b3d;
-      text-shadow: 0 3px 0 rgba(255, 255, 255, 0.65);
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 12px;
-      padding: 8px 12px;
-      border: 2px solid #ffd39e;
+    #topbar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: calc(100% - 38px);
+      pointer-events: none;
     }
 
     #panel {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      background: #fff4e4;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      align-items: stretch;
+      background: linear-gradient(180deg, #fff6ea, #ffe4d0);
       padding: 10px 12px;
-      border-radius: 14px;
-      box-shadow: 0 10px 18px rgba(255, 186, 142, 0.28), inset 0 0 0 3px #ffd39e;
-      border: 2px solid #e28765;
+      border-radius: 16px;
+      box-shadow: 0 14px 26px rgba(255, 161, 124, 0.2), inset 0 0 0 3px #ffd7b5;
+      border: 2px solid #f08c63;
+      pointer-events: auto;
     }
 
     .pill {
       display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      gap: 6px;
-      padding: 7px 11px;
-      border-radius: 10px;
-      font-size: 13px;
+      gap: 2px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 12px;
       background: linear-gradient(145deg, #ffe9c5, #ffd2a2);
       box-shadow: inset 0 2px 0 #fff5e7, inset 0 -2px 0 #f3b578, 0 4px 0 #e28765;
       color: #3f332b;
       text-shadow: none;
       border: 2px solid #e28765;
+      min-width: 96px;
+      text-align: center;
     }
 
     .pill strong {
       color: #e25f4f;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.6px;
+      font-size: 14px;
+    }
+
+    #difficultyRow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 244, 234, 0.88);
+      padding: 8px 12px;
+      border-radius: 14px;
+      border: 2px solid #f08c63;
+      box-shadow: 0 10px 18px rgba(255, 161, 124, 0.22), inset 0 0 0 2px #ffd7b5;
+      pointer-events: auto;
+    }
+
+    #difficultyRow .label {
+      font-weight: 700;
+      color: #d55f3f;
+      letter-spacing: 1px;
+    }
+
+    .chip {
+      border: 2px solid #e28765;
+      background: linear-gradient(145deg, #fff3e1, #ffd7b9);
+      color: #4a3831;
+      padding: 6px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 12px;
+      box-shadow: 0 6px 0 #e28765, 0 12px 22px rgba(226, 135, 101, 0.2);
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+    }
+
+    .chip:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 0 #e28765, 0 14px 26px rgba(226, 135, 101, 0.24);
+    }
+
+    .chip.active {
+      background: linear-gradient(145deg, #ffb48f, #ff8d6f);
+      color: #fffdf6;
+      box-shadow: 0 8px 0 #d86f4c, 0 14px 26px rgba(216, 111, 76, 0.26);
     }
 
     #game {
@@ -153,24 +238,35 @@
   </style>
 </head>
 <body>
-  <div id="frame">
-    <div id="hud">
-      <div id="legend">
-        按键：<strong>← →</strong> 侧移 ｜ <strong>↑ ↓</strong> 前进/后退 ｜ <strong>空格</strong> 开火 ｜ 防线：红色刻度线
-      </div>
-      <div id="panel">
-        <span class="pill">分数 <strong id="score">0</strong></span>
-        <span class="pill">金币 <strong id="coins">0</strong></span>
-        <span class="pill">生命 <strong id="lives">3</strong></span>
-        <span class="pill">武装 <strong id="power">基础机炮</strong></span>
-        <span class="pill">机型 <strong id="airframe">教练机</strong></span>
-      </div>
+  <div id="layout">
+    <div id="tipStrip">
+      <span class="label">提示</span>
+      <span class="text">按左右/AD 移动<br />飞机防守补给线</span>
     </div>
-    <canvas id="game" width="560" height="820"></canvas>
-    <div id="overlay" data-state="start">
-      <h1>飞机突袭交通线</h1>
-      <p>驾驶美军前线攻击机，守住补给线，摧毁前方载具与伪装补给。</p>
-      <button id="start">起飞</button>
+    <div id="frame">
+      <div id="hud">
+        <div id="topbar">
+          <div id="panel">
+            <span class="pill">分数 <strong id="score">0</strong></span>
+            <span class="pill">金币 <strong id="coins">0</strong></span>
+            <span class="pill">生命 <strong id="lives">3</strong></span>
+            <span class="pill">武装 <strong id="power">基础机炮</strong></span>
+            <span class="pill">机型 <strong id="airframe">教练机</strong></span>
+          </div>
+          <div id="difficultyRow">
+            <span class="label" id="difficultyLabel">难度</span>
+            <button class="chip active" data-difficulty="easy">轻松</button>
+            <button class="chip" data-difficulty="normal">标准</button>
+            <button class="chip" data-difficulty="hard">硬核</button>
+          </div>
+        </div>
+      </div>
+      <canvas id="game" width="560" height="820"></canvas>
+      <div id="overlay" data-state="start">
+        <h1>飞机突袭交通线</h1>
+        <p>驾驶美军前线攻击机，守住补给线，摧毁前方载具与伪装补给。</p>
+        <button id="start">起飞</button>
+      </div>
     </div>
   </div>
 
@@ -182,8 +278,10 @@
     const livesEl = document.getElementById('lives');
     const powerEl = document.getElementById('power');
     const airframeEl = document.getElementById('airframe');
+    const difficultyLabel = document.getElementById('difficultyLabel');
     const overlay = document.getElementById('overlay');
     const startBtn = document.getElementById('start');
+    const difficultyButtons = Array.from(document.querySelectorAll('[data-difficulty]'));
 
     const airframes = [
       { name: '教练机', size: 1, color: '#7ed8ff' },
@@ -202,6 +300,12 @@
       { label: '轨道炮+风暴', cooldown: 140, damage: 1.6 },
     ];
 
+    const difficulties = {
+      easy: { label: '轻松', spawn: 1.05, hp: 0.9, speed: 0.92, coin: 0.9 },
+      normal: { label: '标准', spawn: 0.92, hp: 1, speed: 1, coin: 1 },
+      hard: { label: '硬核', spawn: 0.75, hp: 1.22, speed: 1.12, coin: 1.15 },
+    };
+
     const world = {
       width: canvas.width,
       height: canvas.height,
@@ -211,6 +315,7 @@
       coins: 0,
       lives: 3,
       revives: 0,
+      difficulty: 'easy',
       failureReason: '',
     };
 
@@ -256,6 +361,14 @@
       } else {
         startGame();
       }
+    });
+
+    difficultyButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        world.difficulty = btn.dataset.difficulty;
+        difficultyButtons.forEach((b) => b.classList.toggle('active', b === btn));
+        updateHud();
+      });
     });
 
     function startGame() {
@@ -308,18 +421,21 @@
       livesEl.textContent = world.lives;
       powerEl.textContent = weaponStages[weaponStageIndex()].label;
       airframeEl.textContent = currentAirframe().name;
+      difficultyLabel.textContent = '难度｜' + currentDifficulty().label;
+      difficultyButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.difficulty === world.difficulty));
     }
 
     function spawnThreat() {
       const roll = Math.random();
       const level = weaponStageIndex();
       const hull = airframeStage();
-      const bulk = 1 + level * 0.22 + hull * 0.18 + Math.min(0.4, world.score * 0.003);
+      const diff = currentDifficulty();
+      const bulk = (1 + level * 0.22 + hull * 0.18 + Math.min(0.4, world.score * 0.003)) * (1 + (diff.hp - 1) * 0.5);
       const baseSize = 48 + Math.random() * 22;
       const size = baseSize * bulk;
       const x = Math.random() * (world.width - size - 28) + 14;
       const sway = (Math.random() * 2 - 1) * 55;
-      const toughness = Math.max(0, level) + hull + Math.floor(world.score / 45);
+      const toughness = (Math.max(0, level) + hull + Math.floor(world.score / 45)) * diff.hp;
       const common = { x, y: -size, size, sway, offset: Math.random() * Math.PI * 2 };
 
       if (roll > 0.8) {
@@ -327,15 +443,15 @@
           ...common,
           type: 'fruit',
           variant: Math.floor(Math.random() * 6),
-          speedY: 65 + Math.random() * 35,
-          hp: 1 + Math.floor(toughness / 2),
+          speedY: (65 + Math.random() * 35) * diff.speed,
+          hp: Math.max(1, Math.round(1 + Math.floor(toughness / 2))),
         });
       } else if (roll > 0.55) {
-        threats.push({ ...common, type: 'jeep', speedY: 90 + Math.random() * 60 + world.score * 0.25, hp: 1 + toughness });
+        threats.push({ ...common, type: 'jeep', speedY: (90 + Math.random() * 60 + world.score * 0.25) * diff.speed, hp: Math.round(1 + toughness) });
       } else if (roll > 0.3) {
-        threats.push({ ...common, type: 'tank', speedY: 70 + Math.random() * 40 + world.score * 0.2, hp: 2 + toughness });
+        threats.push({ ...common, type: 'tank', speedY: (70 + Math.random() * 40 + world.score * 0.2) * diff.speed, hp: Math.round(2 + toughness) });
       } else {
-        threats.push({ ...common, type: 'boat', speedY: 65 + Math.random() * 35 + world.score * 0.22, hp: 1 + toughness });
+        threats.push({ ...common, type: 'boat', speedY: (65 + Math.random() * 35 + world.score * 0.22) * diff.speed, hp: Math.round(1 + toughness) });
       }
     }
 
@@ -358,6 +474,10 @@
 
     function currentAirframe() {
       return airframes[airframeStage()];
+    }
+
+    function currentDifficulty() {
+      return difficulties[world.difficulty] || difficulties.easy;
     }
 
     function shoot(timestamp) {
@@ -463,7 +583,8 @@
       }
 
       spawnTimer += delta;
-      if (spawnTimer > 0.85) {
+      const spawnInterval = 0.85 * currentDifficulty().spawn;
+      if (spawnTimer > spawnInterval) {
         spawnThreat();
         spawnTimer = 0;
       }
@@ -519,6 +640,7 @@
     }
 
     function checkCollision() {
+      const rewardScale = currentDifficulty().coin;
       for (let i = threats.length - 1; i >= 0; i--) {
         const p = threats[i];
         const px1 = p.x;
@@ -562,7 +684,7 @@
           threats.splice(i, 1);
           if (p.type === 'fruit') {
             world.score += 3;
-            world.coins += 3;
+            world.coins += Math.round(3 * rewardScale);
             if (world.lives < 5) world.lives += 1;
             spawnBurst(p.x + p.size / 2, p.y + p.size * 0.25, '#ffb347', 10, 1);
             updateHud();
@@ -575,22 +697,23 @@
     }
 
     function grantReward(p) {
+      const rewardScale = currentDifficulty().coin;
       if (p.type === 'fruit') {
         world.score += 3;
-        world.coins += 3;
+        world.coins += Math.round(3 * rewardScale);
         if (world.lives < 5) world.lives += 1;
         spawnBurst(p.x + p.size / 2, p.y + p.size * 0.2, '#ffb347', 10, 1);
       } else if (p.type === 'tank') {
         world.score += 4;
-        world.coins += 4;
+        world.coins += Math.round(4 * rewardScale);
         spawnBurst(p.x + p.size / 2, p.y + p.size * 0.32, '#f0ddc2', 14, 1.2);
       } else if (p.type === 'boat') {
         world.score += 2;
-        world.coins += 2;
+        world.coins += Math.round(2 * rewardScale);
         spawnBurst(p.x + p.size / 2, p.y + p.size * 0.26, '#8ad0ff', 12, 1);
       } else {
         world.score += 2;
-        world.coins += 2;
+        world.coins += Math.round(2 * rewardScale);
         spawnBurst(p.x + p.size / 2, p.y + p.size * 0.3, '#c8d6cf', 12, 0.9);
       }
     }
@@ -1180,6 +1303,7 @@
       }
     }
 
+    updateHud();
     draw();
   </script>
 </body>
