@@ -1,168 +1,1488 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8" />
-<title>SVG 飞机大战</title>
-<style>
-  body {
-    margin: 0;
-    background: #111;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    color: #fff;
-    font-family: Arial, sans-serif;
-  }
-  #info {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 14px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>飞机突袭交通线</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 32% 18%, #ffe8c9, #ffc6a3 42%, #ffa9a0 80%);
+      color: #3a2f2f;
+      font-family: 'Baloo 2', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    #page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    #topControls {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      padding: 14px 18px 18px;
+      background: radial-gradient(circle at 12% 20%, #fff6ee 0%, #ffe7d6 56%, #ffd6bf 100%);
+      border-radius: 22px;
+      border: 3px solid #f3976b;
+      box-shadow: 0 18px 30px rgba(255, 145, 116, 0.26), inset 0 0 0 6px rgba(255, 255, 255, 0.65);
+      width: 760px;
+    }
+
+    #topTitleRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    #titleBadge {
+      padding: 10px 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ffb78a, #ff9277);
+      color: #fffef9;
+      font-size: 18px;
+      letter-spacing: 1px;
+      box-shadow: 0 10px 24px rgba(255, 147, 116, 0.28);
+      border: 2px solid #f07052;
+    }
+
+    #hudRow {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .hudCard {
+      background: linear-gradient(180deg, #fff3e6, #ffe1c8);
+      border-radius: 16px;
+      padding: 10px 12px 8px;
+      box-shadow: 0 12px 22px rgba(255, 161, 124, 0.18), inset 0 0 0 3px #ffd7b5, 0 6px 0 #e28765;
+      border: 2px solid #f08c63;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-start;
+      min-height: 64px;
+    }
+
+    .hudCard.wide {
+      grid-column: span 2;
+    }
+
+    .hudCard .label {
+      font-size: 12px;
+      color: #d55f3f;
+      letter-spacing: 0.8px;
+    }
+
+    .hudCard .value {
+      font-size: 20px;
+      color: #4a3831;
+      text-shadow: 0 2px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .hudCard .sub {
+      font-size: 12px;
+      color: #7b5a4c;
+    }
+
+    #difficultyRow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 244, 234, 0.9);
+      padding: 8px 12px;
+      border-radius: 14px;
+      border: 2px solid #f08c63;
+      box-shadow: 0 10px 18px rgba(255, 161, 124, 0.22), inset 0 0 0 2px #ffd7b5;
+      pointer-events: auto;
+    }
+
+    #difficultyRow .label {
+      font-weight: 700;
+      color: #d55f3f;
+      letter-spacing: 1px;
+    }
+
+    .chip {
+      border: 2px solid #e28765;
+      background: linear-gradient(145deg, #fff3e1, #ffd7b9);
+      color: #4a3831;
+      padding: 6px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 12px;
+      box-shadow: 0 6px 0 #e28765, 0 12px 22px rgba(226, 135, 101, 0.2);
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+    }
+
+    .chip:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 0 #e28765, 0 14px 26px rgba(226, 135, 101, 0.24);
+    }
+
+    .chip.active {
+      background: linear-gradient(145deg, #ffb48f, #ff8d6f);
+      color: #fffdf6;
+      box-shadow: 0 8px 0 #d86f4c, 0 14px 26px rgba(216, 111, 76, 0.26);
+    }
+
+    #topButtons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    #layout {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+
+    #tipStrip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 20px 12px;
+      background: linear-gradient(145deg, #fff4e0, #ffd7bf);
+      border: 2px solid #ff9c7a;
+      box-shadow: 0 12px 26px rgba(255, 138, 109, 0.18);
+      border-radius: 20px;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      letter-spacing: 1px;
+      font-size: 14px;
+      color: #5c4b3d;
+      height: 820px;
+      justify-content: center;
+    }
+
+    #tipStrip .label {
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #ffb48f, #ff8d6f);
+      color: #fffdf6;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+    }
+
+    #tipStrip .text {
+      writing-mode: vertical-rl;
+      line-height: 1.6;
+      text-align: center;
+      padding-top: 4px;
+    }
+
+    #frame {
+      position: relative;
+      width: 560px;
+      height: 820px;
+      border-radius: 26px;
+      overflow: hidden;
+      background: linear-gradient(160deg, #ffffff 0%, #fff6ec 40%, #ffe2d3 100%);
+      box-shadow: 0 28px 42px rgba(108, 76, 59, 0.18), inset 0 0 0 8px #ffd8b8, inset 0 0 0 14px #f7b78d;
+      border: 2px solid #f08c63;
+    }
+
+    #game {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #b6e7ff;
+      cursor: crosshair;
+    }
+
+    #overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(255, 245, 230, 0.86), rgba(250, 214, 188, 0.95));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+      transition: opacity 160ms ease;
+      z-index: 3;
+      color: #3d302a;
+    }
+
+    #overlay.hidden {
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    #overlay h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 1px;
+      text-shadow: 0 4px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    #overlay p {
+      margin: 0;
+      line-height: 1.6;
+      color: #5d4a3f;
+    }
+
+    button {
+      background: linear-gradient(145deg, #ffb86c, #ff8f6f);
+      border: 2px solid #e47051;
+      color: #3d2e26;
+      padding: 12px 26px;
+      font-size: 16px;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 10px 0 #e47051, 0 16px 28px rgba(228, 112, 81, 0.32);
+      transition: transform 120ms ease, box-shadow 120ms ease;
+      pointer-events: auto;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 0 #e47051, 0 20px 32px rgba(228, 112, 81, 0.36);
+    }
+
+    button:active {
+      transform: translateY(2px);
+      box-shadow: 0 6px 0 #e47051, 0 12px 22px rgba(228, 112, 81, 0.3);
+    }
+  </style>
 </head>
-<body>
+  <body>
+    <div id="page">
+    <div id="topControls">
+      <div id="topTitleRow">
+        <div id="titleBadge">消耗 <span id="reviveCostValue">14</span> 金币复活</div>
+        <div id="difficultyRow">
+          <span class="label" id="difficultyLabel">速度｜轻松</span>
+          <button class="chip active" data-difficulty="easy">轻松</button>
+          <button class="chip" data-difficulty="normal">标准</button>
+          <button class="chip" data-difficulty="hard">硬核</button>
+        </div>
+      </div>
+      <div id="hudRow">
+        <div class="hudCard">
+          <div class="label">战绩</div>
+          <div class="value" id="score">0</div>
+          <div class="sub">连击 <span id="combo">0</span> ×</div>
+        </div>
+        <div class="hudCard">
+          <div class="label">金币</div>
+          <div class="value" id="coins">0</div>
+          <div class="sub">珍稀补给翻倍</div>
+        </div>
+        <div class="hudCard">
+          <div class="label">生命</div>
+          <div class="value" id="lives">3</div>
+          <div class="sub">突破防线即失败</div>
+        </div>
+        <div class="hudCard wide">
+          <div class="label">武装</div>
+          <div class="value" id="power">基础机炮</div>
+          <div class="sub" id="weaponDetail">平射双管｜速率</div>
+        </div>
+        <div class="hudCard wide">
+          <div class="label">机型进化</div>
+          <div class="value" id="airframe">教练机</div>
+          <div class="sub" id="airframeDetail">金币可解锁进阶外形</div>
+        </div>
+        <div class="hudCard">
+          <div class="label">速度</div>
+          <div class="value" id="speedHint">轻松</div>
+          <div class="sub">越后刷新越狠</div>
+        </div>
+      </div>
+      <div id="topButtons">
+        <button id="start">开始 / 复活</button>
+      </div>
+    </div>
 
-<div id="info">
-  ← → 移动 ｜ 空格射击 ｜ 分数：<span id="score">0</span>
-</div>
+      <div id="layout">
+      <div id="tipStrip">
+        <span class="label">提示</span>
+        <span class="text">按←→方向键移动<br />空格射击</span>
+      </div>
+      <div id="frame">
+        <canvas id="game" width="560" height="820"></canvas>
+        <div id="overlay" data-state="start">
+          <h1>飞机突袭交通线</h1>
+          <p>驾驶美军前线攻击机，守住补给线，摧毁前方载具与伪装补给。左右移动，空格射击，防线被穿即失败。</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<svg id="game" width="400" height="600" viewBox="0 0 400 600" style="background:#000">
-  <!-- 玩家飞机 -->
-  <polygon id="player"
-    points="200,520 185,560 200,545 215,560"
-    fill="#4caf50" />
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const coinsEl = document.getElementById('coins');
+    const livesEl = document.getElementById('lives');
+    const powerEl = document.getElementById('power');
+    const airframeEl = document.getElementById('airframe');
+    const comboEl = document.getElementById('combo');
+    const weaponDetailEl = document.getElementById('weaponDetail');
+    const airframeDetailEl = document.getElementById('airframeDetail');
+    const speedHintEl = document.getElementById('speedHint');
+    const reviveCostEl = document.getElementById('reviveCostValue');
+    const difficultyLabel = document.getElementById('difficultyLabel');
+    const overlay = document.getElementById('overlay');
+    const startBtn = document.getElementById('start');
+    const difficultyButtons = Array.from(document.querySelectorAll('[data-difficulty]'));
 
-</svg>
+    const airframes = [
+      { name: '教练机', size: 1, color: '#7ed8ff', detail: '轻盈起步', wing: 0.9, tail: 0.8 },
+      { name: '前线攻击机', size: 1.05, color: '#7ec8ff', detail: '平衡机动', wing: 1, tail: 0.9 },
+      { name: '大黄蜂', size: 1.12, color: '#73b4ff', detail: '战斗蜂腰', wing: 1.08, tail: 0.96 },
+      { name: 'F-35', size: 1.18, color: '#6da2ff', detail: '隐身突防', wing: 1.14, tail: 1.02 },
+      { name: 'F-22', size: 1.25, color: '#5b90ff', detail: '俯冲猎手', wing: 1.22, tail: 1.08 },
+      { name: 'B-2 幽灵', size: 1.32, color: '#4f7ded', detail: '飞翼轰炸', wing: 1.36, tail: 1.2 },
+    ];
 
-<script>
-const svg = document.getElementById("game");
-const player = document.getElementById("player");
-const scoreEl = document.getElementById("score");
+    const weaponStages = [
+      { label: '基础机炮', detail: '平射双管｜速率', cooldown: 260, damage: 1 },
+      { label: '三向霰弹', detail: '锥形散射｜中速', cooldown: 220, damage: 1 },
+      { label: '霰弹+微导弹', detail: '追踪小导弹｜高爆', cooldown: 180, damage: 1.2 },
+      { label: '激光切割', detail: '贯穿光束｜连射', cooldown: 160, damage: 1.4 },
+      { label: '轨道炮+风暴', detail: '重型电轨+震荡球', cooldown: 140, damage: 1.6 },
+    ];
 
-let playerX = 200;
-let bullets = [];
-let enemies = [];
-let score = 0;
-let left = false;
-let right = false;
+    const difficulties = {
+      easy: { label: '轻松', spawn: 1.1, hp: 0.88, speed: 0.9, coin: 0.9 },
+      normal: { label: '标准', spawn: 0.9, hp: 1.02, speed: 1, coin: 1 },
+      hard: { label: '硬核', spawn: 0.7, hp: 1.32, speed: 1.18, coin: 1.2 },
+    };
 
-document.addEventListener("keydown", e => {
-  if (e.code === "ArrowLeft") left = true;
-  if (e.code === "ArrowRight") right = true;
-  if (e.code === "Space") shoot();
-});
+    const world = {
+      width: canvas.width,
+      height: canvas.height,
+      running: false,
+      lastTime: 0,
+      score: 0,
+      coins: 0,
+      lives: 3,
+      revives: 0,
+      combo: 0,
+      bestCombo: 0,
+      hype: 0,
+      difficulty: 'easy',
+      failureReason: '',
+    };
 
-document.addEventListener("keyup", e => {
-  if (e.code === "ArrowLeft") left = false;
-  if (e.code === "ArrowRight") right = false;
-});
+    const plane = {
+      x: canvas.width / 2,
+      y: canvas.height - 140,
+      width: 82,
+      height: 86,
+      speedX: 360,
+      speedY: 280,
+      baseCooldown: 220,
+      lastShot: 0,
+    };
 
-function updatePlayer() {
-  if (left) playerX -= 5;
-  if (right) playerX += 5;
-  playerX = Math.max(20, Math.min(380, playerX));
-  player.setAttribute(
-    "points",
-    `${playerX},520 ${playerX-15},560 ${playerX},545 ${playerX+15},560`
-  );
-}
+    const defenseLine = world.height - 90;
 
-function shoot() {
-  const bullet = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-  bullet.setAttribute("x", playerX - 2);
-  bullet.setAttribute("y", 510);
-  bullet.setAttribute("width", 4);
-  bullet.setAttribute("height", 10);
-  bullet.setAttribute("fill", "#ffeb3b");
-  svg.appendChild(bullet);
-  bullets.push(bullet);
-}
+    const bullets = [];
+    const effects = [];
+    const threats = [];
+    const keys = { left: false, right: false, up: false, down: false, space: false };
+    let spawnTimer = 0;
 
-function spawnEnemy() {
-  const enemy = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-  const x = Math.random() * 360 + 20;
-  enemy.setAttribute("x", x);
-  enemy.setAttribute("y", -20);
-  enemy.setAttribute("width", 30);
-  enemy.setAttribute("height", 20);
-  enemy.setAttribute("fill", "#f44336");
-  svg.appendChild(enemy);
-  enemies.push(enemy);
-}
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'ArrowLeft') keys.left = true;
+      if (e.code === 'ArrowRight') keys.right = true;
+      if (e.code === 'ArrowUp') keys.up = true;
+      if (e.code === 'ArrowDown') keys.down = true;
+      if (e.code === 'Space') keys.space = true;
+    });
 
-function updateBullets() {
-  bullets = bullets.filter(b => {
-    let y = parseFloat(b.getAttribute("y"));
-    y -= 8;
-    b.setAttribute("y", y);
-    if (y < -20) {
-      svg.removeChild(b);
-      return false;
-    }
-    return true;
-  });
-}
+    document.addEventListener('keyup', (e) => {
+      if (e.code === 'ArrowLeft') keys.left = false;
+      if (e.code === 'ArrowRight') keys.right = false;
+      if (e.code === 'ArrowUp') keys.up = false;
+      if (e.code === 'ArrowDown') keys.down = false;
+      if (e.code === 'Space') keys.space = false;
+    });
 
-function updateEnemies() {
-  enemies = enemies.filter(e => {
-    let y = parseFloat(e.getAttribute("y"));
-    y += 2;
-    e.setAttribute("y", y);
-    if (y > 600) {
-      svg.removeChild(e);
-      return false;
-    }
-    return true;
-  });
-}
-
-function checkCollision() {
-  bullets.forEach(b => {
-    const bx = parseFloat(b.getAttribute("x"));
-    const by = parseFloat(b.getAttribute("y"));
-
-    enemies.forEach(e => {
-      const ex = parseFloat(e.getAttribute("x"));
-      const ey = parseFloat(e.getAttribute("y"));
-
-      if (
-        bx < ex + 30 &&
-        bx + 4 > ex &&
-        by < ey + 20 &&
-        by + 10 > ey
-      ) {
-        svg.removeChild(b);
-        svg.removeChild(e);
-        bullets = bullets.filter(x => x !== b);
-        enemies = enemies.filter(x => x !== e);
-        score++;
-        scoreEl.textContent = score;
+    startBtn.addEventListener('click', () => {
+      const mode = overlay.dataset.state;
+      if (mode === 'revive' && world.coins >= reviveCost()) {
+        reviveGame();
+      } else {
+        startGame();
       }
     });
-  });
-}
 
-let enemyTimer = 0;
+    difficultyButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        world.difficulty = btn.dataset.difficulty;
+        difficultyButtons.forEach((b) => b.classList.toggle('active', b === btn));
+        updateHud();
+      });
+    });
 
-function gameLoop() {
-  updatePlayer();
-  updateBullets();
-  updateEnemies();
-  checkCollision();
+    function startGame() {
+      world.running = true;
+      world.score = 0;
+      world.coins = 0;
+      world.lives = 3;
+      world.revives = 0;
+      world.combo = 0;
+      world.bestCombo = 0;
+      world.hype = 0;
+      plane.x = canvas.width / 2;
+      plane.y = canvas.height - 140;
+      bullets.length = 0;
+      threats.length = 0;
+      effects.length = 0;
+      world.lastTime = performance.now();
+      spawnTimer = 0;
+      updateHud();
+      overlay.classList.add('hidden');
+      overlay.dataset.state = 'start';
+      overlay.querySelector('h1').textContent = '飞机突袭交通线';
+      overlay.querySelector('p').textContent = '驾驶美军前线攻击机，守住补给线，摧毁前方载具与伪装补给。';
+      startBtn.textContent = '开始 / 复活';
+      requestAnimationFrame(loop);
+    }
 
-  enemyTimer++;
-  if (enemyTimer > 60) {
-    spawnEnemy();
-    enemyTimer = 0;
-  }
+    function reviveCost() {
+      return Math.round(14 * Math.pow(1.6, world.revives));
+    }
 
-  requestAnimationFrame(gameLoop);
-}
+    function reviveGame() {
+      const cost = reviveCost();
+      world.coins -= cost;
+      world.revives += 1;
+      world.lives = 3;
+      world.combo = 0;
+      world.hype = 0;
+      bullets.length = 0;
+      threats.length = 0;
+      effects.length = 0;
+      plane.x = canvas.width / 2;
+      plane.y = canvas.height - 140;
+      world.running = true;
+      world.lastTime = performance.now();
+      updateHud();
+      overlay.classList.add('hidden');
+      overlay.dataset.state = 'start';
+      requestAnimationFrame(loop);
+    }
 
-gameLoop();
-</script>
+    function updateHud() {
+      scoreEl.textContent = world.score;
+      coinsEl.textContent = world.coins;
+      livesEl.textContent = world.lives;
+      comboEl.textContent = world.combo;
+      const weapon = weaponStages[weaponStageIndex()];
+      powerEl.textContent = weapon.label;
+      weaponDetailEl.textContent = weapon.detail;
+      const airframe = currentAirframe();
+      airframeEl.textContent = airframe.name;
+      airframeDetailEl.textContent = airframe.detail;
+      difficultyLabel.textContent = '速度｜' + currentDifficulty().label;
+      speedHintEl.textContent = currentDifficulty().label;
+      reviveCostEl.textContent = reviveCost();
+      difficultyButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.difficulty === world.difficulty));
+    }
 
+    function spawnThreat() {
+      const roll = Math.random();
+      const level = weaponStageIndex();
+      const hull = airframeStage();
+      const diff = currentDifficulty();
+      const bulk = (1 + level * 0.22 + hull * 0.18 + Math.min(0.5, world.score * 0.0032)) * (1 + (diff.hp - 1) * 0.6);
+      const baseSize = 58 + Math.random() * 26;
+      const size = baseSize * bulk;
+      const x = Math.random() * (world.width - size - 28) + 14;
+      const sway = (Math.random() * 2 - 1) * 55;
+      const toughness = (Math.max(0, level) + hull + Math.floor(world.score / 45)) * diff.hp;
+      const common = { x, y: -size, size, sway, offset: Math.random() * Math.PI * 2 };
+
+      if (roll > 0.82) {
+        threats.push({
+          ...common,
+          type: 'fruit',
+          variant: Math.floor(Math.random() * 6),
+          speedY: (65 + Math.random() * 35) * diff.speed,
+          hp: Math.max(1, Math.round(1 + Math.floor(toughness / 2))),
+        });
+      } else if (roll > 0.6) {
+        threats.push({
+          ...common,
+          type: 'heli',
+          speedY: (90 + Math.random() * 50 + world.score * 0.35) * diff.speed,
+          hp: Math.round(1.2 + toughness * 0.9),
+          hover: Math.random() * 60 + 32,
+        });
+      } else if (roll > 0.55) {
+        threats.push({ ...common, type: 'jeep', speedY: (90 + Math.random() * 60 + world.score * 0.25) * diff.speed, hp: Math.round(1 + toughness) });
+      } else if (roll > 0.3) {
+        threats.push({ ...common, type: 'tank', speedY: (70 + Math.random() * 40 + world.score * 0.2) * diff.speed, hp: Math.round(2 + toughness) });
+      } else {
+        threats.push({ ...common, type: 'boat', speedY: (65 + Math.random() * 35 + world.score * 0.22) * diff.speed, hp: Math.round(1 + toughness) });
+      }
+    }
+
+    function weaponStageIndex() {
+      if (world.score >= 420) return 4;
+      if (world.score >= 280) return 3;
+      if (world.score >= 170) return 2;
+      if (world.score >= 90) return 1;
+      return 0;
+    }
+
+    function airframeStage() {
+      if (world.coins >= 600) return 5;
+      if (world.coins >= 420) return 4;
+      if (world.coins >= 260) return 3;
+      if (world.coins >= 150) return 2;
+      if (world.coins >= 60) return 1;
+      return 0;
+    }
+
+    function currentAirframe() {
+      return airframes[airframeStage()];
+    }
+
+    function currentDifficulty() {
+      return difficulties[world.difficulty] || difficulties.easy;
+    }
+
+    function shoot(timestamp) {
+      const level = weaponStageIndex();
+      const weapon = weaponStages[level];
+      const cooldown = Math.max(110, weapon.cooldown - level * 12);
+      if (timestamp - plane.lastShot < cooldown) return;
+      plane.lastShot = timestamp;
+
+      const baseDamage = weapon.damage;
+      if (level === 0) {
+        [-12, 12].forEach((ox) => bullets.push(makeBullet('cannon', plane.x + ox, plane.y - 16, baseDamage, 680, 0)));
+      } else if (level === 1) {
+        [-22, 0, 22].forEach((ox) => bullets.push(makeBullet('spread', plane.x + ox, plane.y - 18, baseDamage, 720, ox * 9)));
+      } else if (level === 2) {
+        [-22, 0, 22].forEach((ox) => bullets.push(makeBullet('spread', plane.x + ox, plane.y - 18, baseDamage, 760, ox * 11)));
+        [-16, 16].forEach((ox) => bullets.push(makeBullet('missile', plane.x + ox, plane.y - 26, baseDamage * 2, 520, ox * 2)));
+      } else if (level === 3) {
+        [-24, 0, 24].forEach((ox) => bullets.push(makeBullet('spread', plane.x + ox, plane.y - 18, baseDamage, 820, ox * 12)));
+        [-24, 24].forEach((ox) => bullets.push(makeBullet('missile', plane.x + ox, plane.y - 26, baseDamage * 2, 560, ox * 4)));
+        bullets.push(makeBullet('laser', plane.x, plane.y - 28, baseDamage * 1.6, 0, 0));
+      } else {
+        [-26, 0, 26].forEach((ox) => bullets.push(makeBullet('rail', plane.x + ox, plane.y - 20, baseDamage * 2.4, 900, ox * 10)));
+        [-28, 28].forEach((ox) => bullets.push(makeBullet('missile', plane.x + ox, plane.y - 30, baseDamage * 2.2, 620, ox * 6)));
+        bullets.push(makeBullet('storm', plane.x, plane.y - 18, baseDamage * 1.6, 640, 0));
+      }
+
+      spawnBurst(plane.x, plane.y - 18, '#ffd77a', 4 + level * 3, 0.55 + level * 0.15);
+    }
+
+    function makeBullet(type, x, y, damage, speed, vx = 0) {
+      const config = {
+        cannon: { width: 8, height: 26, pierce: 1 },
+        spread: { width: 9, height: 28, pierce: 1 },
+        missile: { width: 16, height: 34, pierce: 1, seek: true },
+        laser: { width: 18, height: 160, pierce: 4, persistent: true, life: 0.28 },
+        rail: { width: 12, height: 52, pierce: 3 },
+        storm: { width: 34, height: 34, pierce: 2, swirl: true },
+      }[type];
+
+      return {
+        type,
+        x,
+        y,
+        vx,
+        speed,
+        damage,
+        width: config.width,
+        height: config.height,
+        pierce: config.pierce,
+        persistent: !!config.persistent,
+        life: config.life || 2,
+        seek: !!config.seek,
+        swirl: !!config.swirl,
+        angle: 0,
+      };
+    }
+
+    function update(delta, timestamp) {
+      const hull = currentAirframe();
+      plane.width = 82 * hull.size;
+      plane.height = 86 * hull.size;
+      plane.bodyColor = hull.color;
+      plane.wingScale = hull.wing;
+      plane.tailScale = hull.tail;
+      plane.speedX = 360 + airframeStage() * 12;
+      plane.speedY = 300 + airframeStage() * 10;
+      if (world.hype > 0) world.hype = Math.max(0, world.hype - delta);
+
+      const moveX = plane.speedX * delta;
+      const moveY = plane.speedY * delta;
+      if (keys.left) plane.x -= moveX;
+      if (keys.right) plane.x += moveX;
+      if (keys.up) plane.y -= moveY;
+      if (keys.down) plane.y += moveY;
+      plane.x = Math.max(plane.width / 2 + 16, Math.min(world.width - plane.width / 2 - 16, plane.x));
+      plane.y = Math.max(110, Math.min(world.height - 110, plane.y));
+      if (keys.space) shoot(timestamp);
+
+      bullets.forEach((b) => {
+        if (b.type === 'laser') {
+          b.x = plane.x;
+          b.y = plane.y - 32;
+          b.life -= delta;
+        } else {
+          if (b.seek && threats.length) {
+            const target = threats[0];
+            const dir = Math.sign(target.x + target.size / 2 - b.x);
+            b.vx += dir * 28 * delta;
+          }
+          if (b.swirl) {
+            b.angle += delta * 6;
+            b.vx = Math.sin(b.angle) * 160;
+          }
+          b.y -= b.speed * delta;
+          if (b.vx) b.x += b.vx * delta;
+        }
+      });
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        const b = bullets[i];
+        if (b.persistent) {
+          if (b.life <= 0) bullets.splice(i, 1);
+        } else if (b.y < -60 || b.x < -50 || b.x > world.width + 50) {
+          bullets.splice(i, 1);
+        }
+      }
+
+      spawnTimer += delta;
+      const spawnInterval = 0.85 * currentDifficulty().spawn;
+      if (spawnTimer > spawnInterval) {
+        spawnThreat();
+        spawnTimer = 0;
+      }
+
+      threats.forEach((p) => {
+        p.y += p.speedY * delta;
+        p.x += Math.sin(timestamp / 720 + p.offset) * p.sway * delta;
+        if (p.type === 'heli') {
+          p.y += Math.sin(timestamp / 360 + p.offset) * 18 * delta;
+          p.x += Math.cos(timestamp / 420 + p.offset) * (p.hover || 36) * delta;
+        }
+      });
+      for (let i = threats.length - 1; i >= 0; i--) {
+        if (threats[i].type !== 'fruit' && threats[i].y + threats[i].size * 0.75 > defenseLine) {
+          breachDefense(threats[i]);
+          threats.splice(i, 1);
+          continue;
+        }
+        if (threats[i].y > world.height + threats[i].size) {
+          if (threats[i].type !== 'fruit') loseLife('被漏过的目标导致机体受损');
+          threats.splice(i, 1);
+        }
+      }
+
+      effects.forEach((e) => {
+        e.x += e.vx * delta;
+        e.y += e.vy * delta;
+        e.life -= delta;
+      });
+      for (let i = effects.length - 1; i >= 0; i--) {
+        if (effects[i].life <= 0) effects.splice(i, 1);
+      }
+
+      checkCollision();
+    }
+
+    function loseLife(reason = '机体受损') {
+      if (world.lives <= 0) return;
+      world.lives -= 1;
+      world.combo = 0;
+      world.hype = 0;
+      updateHud();
+      if (world.lives <= 0) {
+        world.failureReason = reason;
+        endGame(true);
+      }
+    }
+
+    function breachDefense(threat) {
+      world.failureReason = '防线被 ' + describeThreat(threat.type) + ' 突破';
+      world.combo = 0;
+      world.hype = 0;
+      endGame(true);
+    }
+
+    function describeThreat(type) {
+      if (type === 'jeep') return '吉普车';
+      if (type === 'tank') return '重型坦克';
+      if (type === 'boat') return '快艇';
+      if (type === 'heli') return '武装直升机';
+      return '伪装补给';
+    }
+
+    function checkCollision() {
+      const rewardScale = currentDifficulty().coin;
+      for (let i = threats.length - 1; i >= 0; i--) {
+        const p = threats[i];
+        const px1 = p.x;
+        const px2 = p.x + p.size;
+        const py1 = p.y;
+        const py2 = p.y + p.size * 0.8;
+
+        for (let j = bullets.length - 1; j >= 0; j--) {
+          const b = bullets[j];
+          const bx1 = b.x - b.width / 2;
+          const bx2 = b.x + b.width / 2;
+          const by1 = b.y - b.height;
+          const by2 = b.y + 4;
+
+          if (bx1 < px2 && bx2 > px1 && by1 < py2 && by2 > py1) {
+            p.hp -= b.damage;
+            b.pierce -= 1;
+            spawnBurst(b.x, b.y, b.type === 'laser' ? '#9bd4ff' : '#ffd48a', 6, 0.6 + 0.2 * b.damage);
+            if (p.hp <= 0) {
+              grantReward(p);
+              threats.splice(i, 1);
+              updateHud();
+            }
+            if (!b.persistent && b.pierce <= 0) {
+              bullets.splice(j, 1);
+            } else if (b.persistent && b.pierce <= 0) {
+              b.life = Math.min(b.life, 0.05);
+            }
+            break;
+          }
+        }
+
+        const planeBox = {
+          x1: plane.x - plane.width / 2,
+          x2: plane.x + plane.width / 2,
+          y1: plane.y - plane.height / 2,
+          y2: plane.y + plane.height / 2,
+        };
+
+        if (planeBox.x1 < px2 && planeBox.x2 > px1 && planeBox.y1 < py2 && planeBox.y2 > py1) {
+          threats.splice(i, 1);
+          if (p.type === 'fruit') {
+            world.score += 3;
+            world.coins += Math.round(3 * rewardScale);
+            if (world.lives < 5) world.lives += 1;
+            spawnBurst(p.x + p.size / 2, p.y + p.size * 0.25, '#ffb347', 10, 1);
+            updateHud();
+          } else {
+            loseLife('机体遭撞击');
+            spawnBurst(plane.x, plane.y - 18, '#ff8b74', 14, 1.2);
+          }
+        }
+      }
+    }
+
+    function grantReward(p) {
+      const rewardScale = currentDifficulty().coin;
+      world.combo += 1;
+      world.bestCombo = Math.max(world.bestCombo, world.combo);
+      const comboBoost = 1 + world.combo * 0.05 + (world.hype > 0 ? 0.35 : 0);
+      if (world.combo % 8 === 0) world.hype = 6;
+
+      if (p.type === 'fruit') {
+        world.score += Math.round(3 * comboBoost);
+        world.coins += Math.round(3 * rewardScale * comboBoost);
+        if (world.lives < 5) world.lives += 1;
+        spawnBurst(p.x + p.size / 2, p.y + p.size * 0.2, '#ffb347', 10, 1);
+      } else if (p.type === 'tank') {
+        world.score += Math.round(4 * comboBoost);
+        world.coins += Math.round(4 * rewardScale * comboBoost);
+        spawnBurst(p.x + p.size / 2, p.y + p.size * 0.32, '#f0ddc2', 14, 1.2);
+      } else if (p.type === 'heli') {
+        world.score += Math.round(3 * comboBoost);
+        world.coins += Math.round(5 * rewardScale * comboBoost);
+        spawnBurst(p.x + p.size / 2, p.y + p.size * 0.24, '#c1e3ff', 14, 1.3);
+      } else if (p.type === 'boat') {
+        world.score += Math.round(2 * comboBoost);
+        world.coins += Math.round(2 * rewardScale * comboBoost);
+        spawnBurst(p.x + p.size / 2, p.y + p.size * 0.26, '#8ad0ff', 12, 1);
+      } else {
+        world.score += Math.round(2 * comboBoost);
+        world.coins += Math.round(2 * rewardScale * comboBoost);
+        spawnBurst(p.x + p.size / 2, p.y + p.size * 0.3, '#c8d6cf', 12, 0.9);
+      }
+    }
+
+    function drawBackground() {
+      ctx.clearRect(0, 0, world.width, world.height);
+
+      const sky = ctx.createLinearGradient(0, 0, 0, world.height);
+      sky.addColorStop(0, '#bcdcff');
+      sky.addColorStop(0.55, '#dff2ff');
+      sky.addColorStop(1, '#ffeede');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, world.width, world.height);
+
+      const sun = ctx.createRadialGradient(world.width * 0.18, world.height * 0.18, 10, world.width * 0.18, world.height * 0.18, 180);
+      sun.addColorStop(0, 'rgba(255,255,255,0.95)');
+      sun.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = sun;
+      ctx.fillRect(0, 0, world.width, world.height);
+
+      const horizonY = world.height * 0.46;
+      const ground = ctx.createLinearGradient(0, horizonY, 0, world.height);
+      ground.addColorStop(0, '#f4d4ae');
+      ground.addColorStop(1, '#d8a57c');
+      ctx.fillStyle = ground;
+      ctx.fillRect(0, horizonY, world.width, world.height - horizonY);
+
+      // perspective runway
+      ctx.save();
+      ctx.translate(world.width / 2, horizonY);
+      ctx.beginPath();
+      ctx.moveTo(-world.width * 0.38, world.height * 0.6);
+      ctx.lineTo(world.width * 0.38, world.height * 0.6);
+      ctx.lineTo(world.width * 0.16, 0);
+      ctx.lineTo(-world.width * 0.16, 0);
+      ctx.closePath();
+      const strip = ctx.createLinearGradient(0, 0, 0, world.height * 0.6);
+      strip.addColorStop(0, '#ffe5c5');
+      strip.addColorStop(1, '#f2c38f');
+      ctx.fillStyle = strip;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,182,124,0.6)';
+      ctx.lineWidth = 10;
+      ctx.stroke();
+
+      // grid lines
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth = 3;
+      for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        ctx.moveTo(-world.width * 0.42 + i * (world.width * 0.084), world.height * 0.6);
+        ctx.lineTo(-world.width * 0.16 + i * (world.width * 0.032), 0);
+        ctx.stroke();
+      }
+      ctx.lineWidth = 6;
+      ctx.setLineDash([24, 24]);
+      ctx.beginPath();
+      ctx.moveTo(0, world.height * 0.6);
+      ctx.lineTo(0, 0);
+      ctx.stroke();
+      ctx.restore();
+
+      // cloud layers
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      for (let i = 0; i < 12; i++) {
+        const cx = (i * 46 + 30) % world.width;
+        const cy = (i * 38 + 60) % (world.height * 0.34);
+        const r = 26 + (i % 4) * 6;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, r * 1.8, r, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx + r, cy + 8, r * 1.2, r * 0.8, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx - r, cy + 6, r * 1.4, r * 0.9, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.strokeStyle = '#ff6d6d';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, defenseLine);
+      ctx.lineTo(world.width, defenseLine);
+      ctx.stroke();
+    }
+
+    function drawPlayerPlane() {
+      ctx.save();
+      ctx.translate(plane.x, plane.y);
+      ctx.lineJoin = 'round';
+      const outline = '#30445e';
+      ctx.strokeStyle = outline;
+      ctx.lineWidth = 4;
+
+      const wingK = plane.wingScale || 1;
+      const tailK = plane.tailScale || 1;
+
+      const gradientWing = ctx.createLinearGradient(-plane.width * 0.8, -plane.height * 0.1, plane.width * 0.8, plane.height * 0.2);
+      gradientWing.addColorStop(0, '#ffe9b4');
+      gradientWing.addColorStop(1, '#ffd27f');
+
+      const gradientBody = ctx.createLinearGradient(0, -plane.height * 0.6, 0, plane.height * 0.68);
+      gradientBody.addColorStop(0, '#ffffff');
+      gradientBody.addColorStop(0.28, plane.bodyColor || '#7ed8ff');
+      gradientBody.addColorStop(1, '#3a4f63');
+
+      // wings
+      ctx.fillStyle = gradientWing;
+      ctx.beginPath();
+      ctx.moveTo(-plane.width * 0.86 * wingK, plane.height * 0.02);
+      ctx.lineTo(plane.width * 0.86 * wingK, -plane.height * 0.16);
+      ctx.lineTo(plane.width * 0.72 * wingK, plane.height * 0.18);
+      ctx.lineTo(-plane.width * 0.68 * wingK, plane.height * 0.32);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // fuselage
+      ctx.fillStyle = gradientBody;
+      ctx.beginPath();
+      ctx.roundRect(-plane.width * 0.24, -plane.height * 0.66, plane.width * 0.48, plane.height * 1.32, 18);
+      ctx.fill();
+      ctx.stroke();
+
+      // shadowed belly
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.beginPath();
+      ctx.roundRect(-plane.width * 0.22, plane.height * 0.1, plane.width * 0.44, plane.height * 0.62, 14);
+      ctx.fill();
+
+      // tailplane
+      ctx.fillStyle = '#ffb783';
+      ctx.beginPath();
+      ctx.moveTo(-plane.width * 0.42 * tailK, plane.height * 0.24);
+      ctx.lineTo(plane.width * 0.42 * tailK, plane.height * 0.08);
+      ctx.lineTo(plane.width * 0.32 * tailK, plane.height * 0.78);
+      ctx.lineTo(-plane.width * 0.32 * tailK, plane.height * 0.88);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // cockpit glass
+      const cockpit = ctx.createLinearGradient(0, -plane.height * 0.48, 0, -plane.height * 0.12);
+      cockpit.addColorStop(0, '#d9f2ff');
+      cockpit.addColorStop(1, '#6fb2ff');
+      ctx.fillStyle = cockpit;
+      ctx.beginPath();
+      ctx.roundRect(-plane.width * 0.22, -plane.height * 0.44, plane.width * 0.44, plane.height * 0.32, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      // nose cap
+      ctx.fillStyle = '#ff8f6f';
+      ctx.beginPath();
+      ctx.moveTo(0, -plane.height * 0.78);
+      ctx.lineTo(-plane.width * 0.16, -plane.height * 0.5);
+      ctx.lineTo(plane.width * 0.16, -plane.height * 0.5);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // engine intakes
+      ctx.fillStyle = '#2f3d4d';
+      ctx.beginPath();
+      ctx.arc(-plane.width * 0.34, plane.height * 0.04, plane.width * 0.08, 0, Math.PI * 2);
+      ctx.arc(plane.width * 0.34, -plane.height * 0.02, plane.width * 0.08, 0, Math.PI * 2);
+      ctx.fill();
+
+      // rim lights
+      ctx.fillStyle = '#fff6d2';
+      ctx.beginPath();
+      ctx.arc(0, plane.height * 0.16, plane.width * 0.12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, -plane.height * 0.78, plane.width * 0.12, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (world.hype > 0) {
+        ctx.globalAlpha = 0.6;
+        ctx.strokeStyle = 'rgba(255, 188, 120, 0.9)';
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.ellipse(0, plane.height * 0.2, plane.width * 0.92, plane.height * 0.5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+
+      ctx.restore();
+    }
+
+    function drawBullets() {
+      bullets.forEach((b) => {
+        ctx.save();
+        if (b.type === 'laser') {
+          const beam = ctx.createLinearGradient(b.x, b.y - b.height, b.x, b.y);
+          beam.addColorStop(0, 'rgba(130,198,255,0)');
+          beam.addColorStop(0.5, 'rgba(130,198,255,0.7)');
+          beam.addColorStop(1, 'rgba(58,120,220,0.9)');
+          ctx.fillStyle = beam;
+          ctx.shadowColor = 'rgba(120,180,255,0.7)';
+          ctx.shadowBlur = 24;
+          ctx.beginPath();
+          ctx.roundRect(b.x - b.width / 2, b.y - b.height, b.width, b.height, 12);
+          ctx.fill();
+        } else if (b.type === 'missile') {
+          ctx.fillStyle = '#ffbf7f';
+          ctx.strokeStyle = '#d55f3f';
+          ctx.lineWidth = 2.4;
+          ctx.beginPath();
+          ctx.roundRect(b.x - b.width / 2, b.y - b.height * 0.7, b.width, b.height * 0.7, 6);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#6c88a8';
+          ctx.beginPath();
+          ctx.moveTo(b.x - b.width / 2 - 4, b.y - b.height * 0.4);
+          ctx.lineTo(b.x, b.y - b.height * 0.2);
+          ctx.lineTo(b.x + b.width / 2 + 4, b.y - b.height * 0.4);
+          ctx.closePath();
+          ctx.fill();
+        } else if (b.type === 'rail') {
+          ctx.strokeStyle = '#9fb9ff';
+          ctx.lineWidth = 6;
+          ctx.shadowColor = 'rgba(140,176,255,0.8)';
+          ctx.shadowBlur = 16;
+          ctx.beginPath();
+          ctx.moveTo(b.x, b.y);
+          ctx.lineTo(b.x, b.y - b.height);
+          ctx.stroke();
+        } else if (b.type === 'storm') {
+          const grad = ctx.createRadialGradient(b.x, b.y, 4, b.x, b.y, b.width * 0.6);
+          grad.addColorStop(0, '#ffe188');
+          grad.addColorStop(1, 'rgba(255,140,90,0.7)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.width * 0.55, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = '#ffce6f';
+          ctx.strokeStyle = '#e47051';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.roundRect(b.x - b.width / 2, b.y - b.height * 0.9, b.width, b.height * 0.9, 4);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#fff7d9';
+          ctx.beginPath();
+          ctx.arc(b.x, b.y - b.height * 0.7, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      });
+    }
+
+    function drawEffects() {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      effects.forEach((e) => {
+        const alpha = Math.max(0, e.life / e.maxLife);
+        const r = e.size * alpha;
+        const grad = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, r);
+        grad.addColorStop(0, e.color);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.restore();
+    }
+
+    function drawJeep(p) {
+      ctx.save();
+      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.45);
+      const w = p.size * 0.98;
+      const h = p.size * 0.42;
+
+      const outline = '#355';
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = outline;
+
+      ctx.fillStyle = '#ffd96c';
+      ctx.beginPath();
+      ctx.roundRect(-w / 2, -h * 0.1, w, h * 1.05, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff4dc';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.36, -h * 0.06, w * 0.72, h * 0.42, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ff8f6f';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.24, -h * 0.34, w * 0.48, h * 0.32, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffcf86';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.12, -h * 0.55, w * 0.24, h * 0.28, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(-w * 0.35, h * 1.08, h * 0.52, 0, Math.PI * 2);
+      ctx.arc(w * 0.35, h * 1.08, h * 0.52, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#5c6b7a';
+      ctx.beginPath();
+      ctx.arc(-w * 0.35, h * 1.08, h * 0.36, 0, Math.PI * 2);
+      ctx.arc(w * 0.35, h * 1.08, h * 0.36, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawTank(p) {
+      ctx.save();
+      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.48);
+      const w = p.size * 1.08;
+      const h = p.size * 0.42;
+      const outline = '#355';
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = outline;
+
+      // tracks
+      ctx.fillStyle = '#ffd96c';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.6, h * 0.45, w * 1.2, h * 0.55, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff';
+      for (let i = -2; i <= 2; i++) {
+        ctx.beginPath();
+        ctx.arc(i * w * 0.2, h * 1.0, h * 0.28, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // body
+      ctx.fillStyle = '#7ed8ff';
+      ctx.beginPath();
+      ctx.roundRect(-w / 2, -h * 0.2, w, h * 1.1, 16);
+      ctx.fill();
+      ctx.stroke();
+
+      // turret
+      ctx.fillStyle = '#fcb46c';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.2, -h * 0.38, w * 0.4, h * 0.9, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      // barrel
+      ctx.fillStyle = '#ff8f6f';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.06, -h * 0.68, w * 0.12, h * 1.25, 10);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawHeli(p) {
+      ctx.save();
+      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.42);
+      const w = p.size * 0.9;
+      const h = p.size * 0.46;
+      const outline = '#2e4a5c';
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = outline;
+
+      const grad = ctx.createLinearGradient(-w / 2, -h, w / 2, h);
+      grad.addColorStop(0, '#b2d8ff');
+      grad.addColorStop(1, '#78aee6');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.42, -h * 0.5, w * 0.84, h * 1.1, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      const glass = ctx.createLinearGradient(0, -h * 0.44, 0, -h * 0.1);
+      glass.addColorStop(0, '#e8f6ff');
+      glass.addColorStop(1, '#7ec5ff');
+      ctx.fillStyle = glass;
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.32, -h * 0.52, w * 0.64, h * 0.46, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.strokeStyle = '#3c5568';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(-w * 0.8, -h * 0.6);
+      ctx.lineTo(w * 0.8, -h * 0.6);
+      ctx.stroke();
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(0, -h * 0.6);
+      ctx.lineTo(0, -h * 0.1);
+      ctx.stroke();
+
+      ctx.fillStyle = '#89bbe8';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.12, h * 0.2, w * 0.24, h * 0.8, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.strokeStyle = outline;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(-w * 0.56, h * 0.72);
+      ctx.lineTo(w * 0.56, h * 0.72);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawBoat(p) {
+      ctx.save();
+      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.52);
+      const w = p.size * 0.98;
+      const h = p.size * 0.44;
+      const outline = '#355';
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = outline;
+
+      ctx.fillStyle = '#7ed8ff';
+      ctx.beginPath();
+      ctx.moveTo(-w / 2, -h * 0.05);
+      ctx.lineTo(w / 2, -h * 0.18);
+      ctx.lineTo(w * 0.45, h * 0.92);
+      ctx.lineTo(-w * 0.45, h * 0.92);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffd96c';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.28, -h * 0.58, w * 0.56, h * 0.64, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff4dc';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.2, -h * 0.52, w * 0.4, h * 0.26, 10);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawFruit(p) {
+      ctx.save();
+      ctx.translate(p.x + p.size / 2, p.y + p.size * 0.42);
+      const r = p.size * 0.3;
+      const outline = '#355';
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = outline;
+      const kind = p.variant ?? 0;
+
+      if (kind === 1) {
+        // kiwi
+        ctx.fillStyle = '#d9f0a2';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 1.15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#a5df6b';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.9, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#fdf7e1';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2e2e2e';
+        for (let i = 0; i < 12; i++) {
+          const a = (Math.PI * 2 * i) / 12;
+          ctx.beginPath();
+          ctx.ellipse(Math.cos(a) * r * 0.55, Math.sin(a) * r * 0.55, 2.2, 4, a, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (kind === 2) {
+        // starfruit
+        ctx.fillStyle = '#ffe06b';
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const a = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+          const ax = Math.cos(a) * r * 1.2;
+          const ay = Math.sin(a) * r * 1.2;
+          const bx = Math.cos(a + Math.PI / 5) * r * 0.55;
+          const by = Math.sin(a + Math.PI / 5) * r * 0.55;
+          if (i === 0) ctx.moveTo(ax, ay);
+          ctx.quadraticCurveTo(bx, by, Math.cos(a + (Math.PI * 2) / 5) * r * 1.2, Math.sin(a + (Math.PI * 2) / 5) * r * 1.2);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffb56a';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.35, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (kind === 3) {
+        // watermelon slice
+        ctx.fillStyle = '#7ed8ff';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 1.1, Math.PI * 0.2, Math.PI * 1.8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ff8f6f';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.95, Math.PI * 0.24, Math.PI * 1.76);
+        ctx.fill();
+
+        ctx.fillStyle = '#2e2e2e';
+        for (let i = 0; i < 10; i++) {
+          const a = Math.PI * 0.24 + (Math.PI * 1.52 * i) / 9;
+          ctx.beginPath();
+          ctx.ellipse(Math.cos(a) * r * 0.6, Math.sin(a) * r * 0.6, 2, 4.2, a, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (kind === 4) {
+        // avocado / pear mix
+        ctx.fillStyle = '#d9f0a2';
+        ctx.beginPath();
+        ctx.moveTo(0, -r * 1.2);
+        ctx.quadraticCurveTo(r * 0.9, -r * 1.0, r * 0.9, r * 0.2);
+        ctx.quadraticCurveTo(r * 0.8, r * 1.25, 0, r * 1.25);
+        ctx.quadraticCurveTo(-r * 0.8, r * 1.25, -r * 0.9, r * 0.2);
+        ctx.quadraticCurveTo(-r * 0.9, -r * 1.0, 0, -r * 1.2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff4dc';
+        ctx.beginPath();
+        ctx.moveTo(0, -r * 1.0);
+        ctx.quadraticCurveTo(r * 0.68, -r * 0.85, r * 0.68, r * 0.1);
+        ctx.quadraticCurveTo(r * 0.6, r * 0.95, 0, r * 1.0);
+        ctx.quadraticCurveTo(-r * 0.6, r * 0.95, -r * 0.68, r * 0.1);
+        ctx.quadraticCurveTo(-r * 0.68, -r * 0.85, 0, -r * 1.0);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#ff8f6f';
+        ctx.beginPath();
+        ctx.arc(0, r * 0.3, r * 0.32, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (kind === 5) {
+        // dragon fruit
+        ctx.fillStyle = '#ff8f6f';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 1.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.92, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2e2e2e';
+        for (let i = 0; i < 18; i++) {
+          const a = (Math.PI * 2 * i) / 18;
+          ctx.beginPath();
+          ctx.ellipse(Math.cos(a) * r * 0.55, Math.sin(a) * r * 0.55, 1.8, 2.6, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else {
+        // citrus
+        ctx.fillStyle = '#ffd96c';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 1.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffb56a';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.98, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#fff7d9';
+        for (let i = 0; i < 8; i++) {
+          const a = (Math.PI * 2 * i) / 8;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.quadraticCurveTo(Math.cos(a) * r * 0.35, Math.sin(a) * r * 0.35, Math.cos(a + Math.PI / 8) * r * 0.9, Math.sin(a + Math.PI / 8) * r * 0.9);
+          ctx.lineTo(Math.cos(a + Math.PI / 8) * r * 0.55, Math.sin(a + Math.PI / 8) * r * 0.55);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function drawThreats() {
+      threats.forEach((p) => {
+        if (p.type === 'jeep') drawJeep(p);
+        else if (p.type === 'tank') drawTank(p);
+        else if (p.type === 'heli') drawHeli(p);
+        else if (p.type === 'boat') drawBoat(p);
+        else drawFruit(p);
+      });
+    }
+
+    function draw() {
+      drawBackground();
+      drawPlayerPlane();
+      drawBullets();
+      drawEffects();
+      drawThreats();
+    }
+
+    function loop(timestamp) {
+      if (!world.running) return;
+      const delta = Math.min(0.04, (timestamp - world.lastTime) / 1000);
+      world.lastTime = timestamp;
+      update(delta, timestamp);
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    function endGame(allowRevive = true) {
+      world.running = false;
+      const cost = reviveCost();
+      const canRevive = allowRevive && world.coins >= cost;
+      overlay.classList.remove('hidden');
+      overlay.dataset.state = canRevive ? 'revive' : 'start';
+      overlay.querySelector('h1').textContent = world.failureReason || '防线失守';
+      overlay.querySelector('p').innerHTML = canRevive
+        ? `可消耗 <strong>${cost}</strong> 金币复活（当前 ${world.coins}），最佳连击 ${world.bestCombo}。`
+        : `金币不足以复活（需要 ${cost}，当前 ${world.coins}），最佳连击 ${world.bestCombo}，可重新起飞。`;
+      startBtn.textContent = canRevive ? `消耗 ${cost} 金币复活` : '重新起飞';
+    }
+
+    function spawnBurst(x, y, color, count = 8, strength = 0.8) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = (Math.random() * 80 + 70) * strength;
+        effects.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 16 + Math.random() * 10,
+          color,
+          life: 0.5 + Math.random() * 0.35,
+          maxLife: 0.5 + Math.random() * 0.35,
+        });
+      }
+    }
+
+    updateHud();
+    draw();
+  </script>
 </body>
 </html>
